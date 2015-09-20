@@ -1,0 +1,21 @@
+<resources>
+    <string name="app_name">Chat</string>
+
+    <string name="hello_world">Hello world!</string>
+    <string name="action_settings">Settings</string>
+    <string name="title_activity_login">LoginActivity</string>
+    <string name="title_activity_list">ListActivity</string>
+
+    <!-- Login activity -->
+    <string name="username">Username</string>
+    <string name="login">Login</string>
+
+    <!-- Room activity -->
+    <string name="author">Author</string>
+    <string name="message">Lorem ipsum dolor sit amet, consectetur adipiscing elit</string>
+    <string name="action">Author is writing</string>
+
+    <string name="drawer_open">Open</string>
+    <string name="drawer_close">Close</string>
+
+</resources>

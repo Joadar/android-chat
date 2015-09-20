@@ -1,0 +1,44 @@
+package com.example.jonathan.chat.Model;
+
+/**
+ * Created by Jonathan on 17/09/15.
+ */
+public class Room {
+
+    private int id;
+    private String name;
+    private int space; // number place total
+    private int nbUser; // number user in this room
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public int getSpace() {
+        return space;
+    }
+
+    public void setSpace(int space) {
+        this.space = space;
+    }
+
+    public int getNbUser() {
+        return nbUser;
+    }
+
+    public void setNbUser(int nbUser) {
+        this.nbUser = nbUser;
+    }
+}
