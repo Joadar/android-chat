@@ -3,6 +3,8 @@ package com.example.jonathan.chat;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.Menu;
@@ -11,29 +13,24 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.FrameLayout;
 
+import com.example.jonathan.chat.Fragment.SexeFragment;
 import com.example.jonathan.chat.Utils.SocketServer;
 import org.json.JSONObject;
 
-public class LoginActivity extends AppCompatActivity implements View.OnClickListener {
-
-    private EditText usernameText;
-    private Button loginButton;
+public class LoginActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
-        usernameText = (EditText) findViewById(R.id.username);
-        loginButton = (Button) findViewById(R.id.login);
-        loginButton.setOnClickListener(this);
-
-        // stop focus
-        //getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
-
-        //getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
-
+        SexeFragment fragment = new SexeFragment();
+        FragmentManager fm = getSupportFragmentManager();
+        FragmentTransaction transaction = fm.beginTransaction();
+        transaction.replace(R.id.contentFragment, fragment);
+        transaction.commit();
     }
 
     @Override
@@ -56,37 +53,5 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         }
 
         return super.onOptionsItemSelected(item);
-    }
-
-    @Override
-    public void onClick(View v) {
-        if(v == loginButton){
-           login();
-        }
-    }
-
-    private void login(){
-        // just for test if the username is empty
-        if(usernameText.length() != 0){
-            SharedPreferences preferences = getSharedPreferences("account", Context.MODE_APPEND);
-            SharedPreferences.Editor editor = preferences.edit();
-            editor.putString("username", usernameText.getText().toString());
-            editor.apply();
-
-            // Sending an object
-            JSONObject obj = new JSONObject();
-            try {
-                obj.put("username", usernameText.getText().toString());
-            } catch(Exception e){
-
-            }
-
-            // instance the socket with the username
-            SocketServer.getInstance(usernameText.getText().toString());
-
-            Intent intent = new Intent(this, ListActivity.class);
-            finish();
-            startActivity(intent);
-        }
     }
 }

@@ -1,60 +1,14 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                xmlns:tools="http://schemas.android.com/tools"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                xmlns:app="http://schemas.android.com/apk/res-auto"
-                android:paddingLeft="@dimen/activity_horizontal_margin"
-                android:paddingRight="@dimen/activity_horizontal_margin"
-                android:paddingTop="@dimen/activity_vertical_margin"
-                android:paddingBottom="@dimen/activity_vertical_margin"
-                tools:context="com.example.jonathan.chat.LoginActivity"
-                android:background="@mipmap/background">
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              xmlns:tools="http://schemas.android.com/tools"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:orientation="horizontal"
+              tools:context="com.example.jonathan.chat.LoginActivity" >
 
-    <RelativeLayout
-        android:id="@+id/mainLayout"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerInParent="true">
+    <FrameLayout
+        android:id="@+id/contentFragment"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_weight="1" />
 
-        <RelativeLayout
-            android:id="@+id/usernameLayout"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:layout_marginBottom="@dimen/margin_bottom">
-
-            <EditText
-                android:id="@+id/username"
-                android:layout_width="@dimen/size_username"
-                android:layout_height="wrap_content"
-                android:textAlignment="center"
-                android:hint="@string/username"
-                android:padding="@dimen/edittext_padding"
-                android:singleLine="true"
-                android:textColor="@color/white"
-                android:textColorHint="@color/white"
-                android:background="@drawable/input_shape"/>
-
-        </RelativeLayout>
-
-
-        <RelativeLayout
-            android:id="@+id/buttonLayout"
-            android:layout_below="@id/usernameLayout"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:layout_marginBottom="@dimen/margin_bottom">
-            <Button
-                android:id="@+id/login"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/login"
-                android:textColor="@color/white"
-                android:background="@drawable/input_shape"
-                android:layout_centerHorizontal="true"/>
-            </RelativeLayout>
-
-    </RelativeLayout>
-
-</RelativeLayout>
+</LinearLayout>

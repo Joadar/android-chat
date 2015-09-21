@@ -2,8 +2,16 @@
 <resources>
     <item name="white" type="color">#FFFFFF</item>
     <item name="red" type="color">#FF0000</item>
-    <item name="primary" type="color">#673AB7</item>
-    <item name="primaryDark" type="color">#311B92</item>
+    <item name="primary" type="color">#FF9800</item>
+    <item name="primaryDark" type="color">#F57C00</item>
+    <item name="lightPrimary" type="color">#FFE0B2</item>
+    <item name="primaryText" type="color">#212121</item>
+    <item name="accentColor" type="color">#607D8B</item>
+    <item name="secondaryText" type="color">#727272</item>
+    <item name="dividerColor" type="color">#B6B6B6</item>
     <item name="black" type="color">#000000</item>
     <item name="green" type="color">#15930c</item>
+    <item name="blue" type="color">#2196F3</item>
+    <item name="pink" type="color">#FF4081</item>
+    <item name="orange" type="color">#dc9f24</item>
 </resources>

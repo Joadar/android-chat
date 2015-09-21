@@ -8,13 +8,22 @@
     <style name="AppTheme.Base" parent="Theme.AppCompat.NoActionBar">
         <item name="colorPrimary">@color/primary</item>
         <item name="colorPrimaryDark">@color/primaryDark</item>
-        <item name="colorAccent">@color/white</item>
-        <item name="android:textColor">@color/white</item>
-
+        <item name="colorAccent">@color/accentColor</item>
+        <item name="android:textColor">@color/primaryText</item>
+        <item name="android:windowBackground">@color/white</item>
     </style>
 
     <style name="CustomBar" parent="ThemeOverlay.AppCompat.Light">
 
+    </style>
+
+    <!-- Text styles -->
+    <style name="title" parent="@android:style/TextAppearance.Medium">
+        <item name="android:textSize">30dp</item>
+    </style>
+
+    <style name="description" parent="@android:style/TextAppearance.Medium">
+        <item name="android:textColor">@color/lightPrimary</item>
     </style>
 
 </resources>

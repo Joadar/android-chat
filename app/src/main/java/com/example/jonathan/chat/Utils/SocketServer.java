@@ -14,7 +14,7 @@ public class SocketServer {
     private static SocketServer mSocket = null;
     private Socket socket;
 
-    private SocketServer(final String username){
+    private SocketServer(final JSONObject user){
         try {
             socket = IO.socket(Tools.API_SERVER);
         } catch(Exception e){
@@ -25,15 +25,9 @@ public class SocketServer {
 
             @Override
             public void call(Object... args) {
-                JSONObject obj = new JSONObject();
-                try {
-                    obj.put("username", username);
-                } catch(Exception e){
-
-                }
 
                 // emit the new user
-                socket.emit("new_user", obj);
+                socket.emit("new_user", user);
             }
 
         });
@@ -49,9 +43,9 @@ public class SocketServer {
         return mSocket;
     }
 
-    public static SocketServer getInstance(String username){
+    public static SocketServer getInstance(JSONObject user){
         if(mSocket == null){
-            mSocket = new SocketServer(username);
+            mSocket = new SocketServer(user);
         }
 
         return mSocket;

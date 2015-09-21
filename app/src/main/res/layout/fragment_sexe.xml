@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingTop="56dp"
+    android:background="@color/primary">
+
+
+    <RelativeLayout
+        android:id="@+id/descriptionChoiceSexe"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true">
+
+        <TextView
+            android:id="@+id/descriptionChoiceTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_marginBottom="16dp"
+            style="@style/title"
+            android:text="@string/descriptionChoiceSexeTitle"/>
+
+        <TextView
+            android:id="@+id/descriptionChoiceContent"
+            android:layout_below="@id/descriptionChoiceTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            style="@style/description"
+            android:text="@string/descriptionChoiceSexeContent"/>
+
+    </RelativeLayout>
+
+
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true">
+
+        <RelativeLayout
+            android:id="@+id/choiceSexe"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+            
+            <RelativeLayout
+                android:id="@+id/aboutBoy"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="60dp">
+
+                <ImageView
+                    android:id="@+id/boyImage"
+                    android:src="@mipmap/boy"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="16dp"/>
+
+                <Button
+                    android:id="@+id/boyButton"
+                    android:layout_below="@id/boyImage"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true"
+                    android:textColor="@color/white"
+                    android:text="@string/boy"
+                    android:background="@drawable/button_boy"/>
+                
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/aboutGirl"
+                android:layout_toRightOf="@id/aboutBoy"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+
+                <ImageView
+                    android:id="@+id/girlImage"
+                    android:src="@mipmap/girl"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="16dp"/>
+
+                <Button
+                    android:id="@+id/girlButton"
+                    android:layout_below="@id/girlImage"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true"
+                    android:textColor="@color/white"
+                    android:text="@string/girl"
+                    android:background="@drawable/button_girl"/>
+                
+            </RelativeLayout>
+
+        </RelativeLayout>
+
+    </RelativeLayout>
+
+</RelativeLayout>

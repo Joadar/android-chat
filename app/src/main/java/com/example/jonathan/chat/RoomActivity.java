@@ -327,8 +327,6 @@ public class RoomActivity extends AppCompatActivity implements TextWatcher {
         Intent intent = new Intent(this, ListActivity.class);
         this.finish();
 
-        //leftRoom();
-
         startActivity(intent);
     }
 

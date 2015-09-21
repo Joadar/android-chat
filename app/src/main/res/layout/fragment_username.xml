@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingTop="56dp"
+    android:background="@color/primary"
+    android:layout_gravity="bottom">
+
+    <RelativeLayout
+        android:id="@+id/descriptionChoiceUsername"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true">
+
+        <TextView
+            android:id="@+id/descriptionChoiceUsernameTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_marginBottom="16dp"
+            style="@style/title"
+            android:text="@string/descriptionChoiceUsernameTitle"/>
+
+        <TextView
+            android:id="@+id/descriptionChoiceUsernameText"
+            android:layout_below="@id/descriptionChoiceUsernameTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            style="@style/description"
+            android:text="@string/descriptionChoiceUsernameContent"/>
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/mainLayout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true">
+
+        <RelativeLayout
+            android:id="@+id/usernameLayout"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:layout_marginBottom="@dimen/margin_bottom">
+
+            <EditText
+                android:id="@+id/username"
+                android:layout_width="@dimen/size_username"
+                android:layout_height="wrap_content"
+                android:textAlignment="center"
+                android:hint="@string/username"
+                android:padding="@dimen/edittext_padding"
+                android:singleLine="true"
+                android:textColor="@color/white"
+                android:textColorHint="@color/white"/>
+                <!--android:background="@drawable/input_shape"-->
+
+
+        </RelativeLayout>
+
+
+        <RelativeLayout
+            android:id="@+id/buttonLayout"
+            android:layout_below="@id/usernameLayout"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center">
+
+            <Button
+                android:id="@+id/login"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/login"
+                android:textColor="@color/white"
+                android:layout_centerHorizontal="true"/>
+        </RelativeLayout>
+
+    </RelativeLayout>
+
+    <TextView
+        android:id="@+id/back"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/textBackToChoiceSexe"
+        android:textColor="@color/white"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="10dp"
+        android:layout_marginLeft="10dp"/>
+
+</RelativeLayout>

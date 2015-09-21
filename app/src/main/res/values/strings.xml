@@ -7,8 +7,22 @@
     <string name="title_activity_list">ListActivity</string>
 
     <!-- Login activity -->
+    <string name="descriptionChoiceSexeTitle">Who are you?</string>
+    <string name="descriptionChoiceSexeContent">Are you a boy or a girl?</string>
+
+    <string name="descriptionChoiceUsernameTitle">What\'s your username ?</string>
+    <string name="descriptionChoiceUsernameContent">Be creative but polite :)</string>
+
+    <string name="textBackToChoiceSexe"><u>Well, I want to go back</u></string>
+
+    <string name="boy">I\'m a boy</string>
+    <string name="girl">I\'m a girl</string>
+
     <string name="username">Username</string>
     <string name="login">Login</string>
+
+    <!-- Room list -->
+    <string name="room_list">Rooms list</string>
 
     <!-- Room activity -->
     <string name="author">Author</string>

@@ -3,12 +3,13 @@ package com.example.jonathan.chat;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.LinearLayoutManager;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.AdapterView;
-import android.widget.ListView;
+import android.support.v7.widget.RecyclerView;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.example.jonathan.chat.Adapter.RoomAdapter;
@@ -22,14 +23,14 @@ import java.util.ArrayList;
 
 import io.socket.emitter.Emitter;
 
-public class ListActivity extends AppCompatActivity implements AdapterView.OnItemClickListener{
+public class ListActivity extends AppCompatActivity {
 
     // Rooms
     private Room room;
     private RoomAdapter roomAdapter;
     private ArrayList<Room> listRooms;
 
-    private ListView listViewRoom;
+    private RecyclerView recyclerViewRoom;
 
     private SocketServer socketServer;
 
@@ -45,9 +46,36 @@ public class ListActivity extends AppCompatActivity implements AdapterView.OnIte
 
         roomAdapter = new RoomAdapter(this, listRooms);
 
-        listViewRoom = (ListView) findViewById(R.id.list_rooms);
-        listViewRoom.setAdapter(roomAdapter);
-        listViewRoom.setOnItemClickListener(this);
+        recyclerViewRoom = (RecyclerView) findViewById(R.id.list_rooms);
+        recyclerViewRoom.setAdapter(roomAdapter);
+        recyclerViewRoom.setLayoutManager(new LinearLayoutManager(this));
+
+        roomAdapter.setOnItemClickListener(new RoomAdapter.OnItemClickListener() {
+            @Override
+            public void onItemClick(View view, int position) {
+
+                // if view is not null
+                if(view != null){
+
+                    // if view.getTag is not null
+                    if(view.getTag() != null){
+
+                        // if view.getTag is equals to id "R.mipmap.nolike"
+                        if(view.getTag().equals(R.mipmap.nolike)) {
+                            ImageView imageView = (ImageView) view;
+                            imageView.setImageResource(R.mipmap.like);
+                            imageView.setTag(R.mipmap.like);
+                        } else if (view.getTag().equals(R.mipmap.like)){
+                            ImageView imageView = (ImageView) view;
+                            imageView.setImageResource(R.mipmap.nolike);
+                            imageView.setTag(R.mipmap.nolike);
+                        }
+                    } else {
+                        accessToRoom(position); // join the room at this position
+                    }
+                }
+            }
+        });
 
         // notice rooms are coming
         socketServer.getInstance().getSocket().on("rooms_are_coming", new Emitter.Listener() {
@@ -83,10 +111,12 @@ public class ListActivity extends AppCompatActivity implements AdapterView.OnIte
                         String name;
                         int space;
                         int nbUser;
+                        String image;
                         try {
                             name = data.getString("name");
                             space = data.getInt("space");
                             nbUser = data.getInt("nb_user");
+                            image = data.getString("image");
                         } catch (JSONException e) {
                             return;
                         }
@@ -96,6 +126,7 @@ public class ListActivity extends AppCompatActivity implements AdapterView.OnIte
                         room.setName(name);
                         room.setSpace(space);
                         room.setNbUser(nbUser);
+                        room.setImage(image);
                         listRooms.add(room);
                         roomAdapter.notifyDataSetChanged();
 
@@ -233,9 +264,8 @@ public class ListActivity extends AppCompatActivity implements AdapterView.OnIte
         return super.onOptionsItemSelected(item);
     }
 
-    @Override
-    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        final Room room = (Room) listViewRoom.getItemAtPosition(position);
+    private void accessToRoom(int position) {
+        final Room room = (Room) listRooms.get(position);
 
         // emit the user want to join this room
         SocketServer.getInstance().getSocket().emit("enter_room", room.getName());

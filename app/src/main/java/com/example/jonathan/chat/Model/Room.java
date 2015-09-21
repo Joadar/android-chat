@@ -9,6 +9,7 @@ public class Room {
     private String name;
     private int space; // number place total
     private int nbUser; // number user in this room
+    private String image; // url image
 
     public int getId() {
         return id;
@@ -40,5 +41,13 @@ public class Room {
 
     public void setNbUser(int nbUser) {
         this.nbUser = nbUser;
+    }
+
+    public String getImage() {
+        return image;
+    }
+
+    public void setImage(String image) {
+        this.image = image;
     }
 }
