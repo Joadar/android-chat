@@ -1,0 +1,70 @@
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/primary"
+    android:paddingTop="56dp"
+    tools:context="com.example.jonathan.chat.HomeActivity">
+
+    <RelativeLayout
+        android:id="@+id/presentationApp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true">
+
+        <TextView
+            android:id="@+id/presentationAppTitle"
+            android:text="@string/app_name"
+            style="@style/title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            android:layout_centerHorizontal="true"/>
+
+        <TextView
+            android:id="@+id/presentationAppContent"
+            android:layout_below="@+id/presentationAppTitle"
+            android:text="@string/presentationAppContent"
+            style="@style/description"
+            android:layout_width="300dp"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:layout_centerHorizontal="true"/>
+
+    </RelativeLayout>
+
+    <ImageView
+        android:layout_centerInParent="true"
+        android:src="@mipmap/blabla"
+        android:layout_width="match_parent"
+        android:layout_height="200dp"
+        android:scaleType="fitCenter"/>
+
+    <LinearLayout
+        android:layout_alignParentBottom="true"
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="100dp">
+
+        <Button
+            android:id="@+id/loginButton"
+            android:text="@string/login"
+            android:textColor="@drawable/button_home_login_text"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_weight=".5"
+            android:background="@drawable/button_home_login"/>
+
+        <Button
+            android:id="@+id/registerButton"
+            android:text="@string/register"
+            android:textColor="@drawable/button_home_register_text"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_weight=".5"
+            android:background="@drawable/button_home_register"/>
+
+    </LinearLayout>
+
+</RelativeLayout>

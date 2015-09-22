@@ -14,7 +14,8 @@
     </style>
 
     <style name="CustomBar" parent="ThemeOverlay.AppCompat.Light">
-
+        <item name="android:background">@color/primary</item>
+        <item name="android:textColor">@color/white</item>
     </style>
 
     <!-- Text styles -->

@@ -1,5 +1,11 @@
 package com.example.jonathan.chat.Utils;
 
+import android.app.Activity;
+import android.content.Intent;
+import android.util.Log;
+
+import com.example.jonathan.chat.HomeActivity;
+
 import org.json.JSONObject;
 
 import io.socket.client.IO;
@@ -13,8 +19,9 @@ public class SocketServer {
 
     private static SocketServer mSocket = null;
     private Socket socket;
+    private static boolean disconnected = false;
 
-    private SocketServer(final JSONObject user){
+    private SocketServer(){
         try {
             socket = IO.socket(Tools.API_SERVER);
         } catch(Exception e){
@@ -25,33 +32,58 @@ public class SocketServer {
 
             @Override
             public void call(Object... args) {
-
-                // emit the new user
-                socket.emit("new_user", user);
+                disconnected = false;
             }
 
         });
+
+        socket.on(Socket.EVENT_DISCONNECT, new Emitter.Listener() {
+
+            @Override
+            public void call(Object... args) {
+                disconnected = true;
+            }
+        });
+
+        socket.on(Socket.EVENT_CONNECT_ERROR, new Emitter.Listener() {
+
+            @Override
+            public void call(Object... args) {
+                disconnected = true;
+            }
+        });
+
+        socket.on(Socket.EVENT_CONNECT_TIMEOUT, new Emitter.Listener() {
+
+            @Override
+            public void call(Object... args) {
+                disconnected = true;
+            }
+        });
+
 
         socket.connect();
     }
 
     public static SocketServer getInstance(){
-        //if(mSocket == null){
-          //  mSocket = new SocketServer();
-        //}
-
-        return mSocket;
-    }
-
-    public static SocketServer getInstance(JSONObject user){
         if(mSocket == null){
-            mSocket = new SocketServer(user);
+            mSocket = new SocketServer();
         }
 
         return mSocket;
     }
 
+    /*public static SocketServer getInstance(JSONObject user){
+        if(mSocket == null){
+            mSocket = new SocketServer();
+        }
+
+        return mSocket;
+    }*/
+
     public Socket getSocket(){
         return socket;
     }
+
+    public boolean isDisconnected() { return disconnected; }
 }

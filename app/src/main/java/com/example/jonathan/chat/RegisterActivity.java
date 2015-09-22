@@ -1,46 +1,26 @@
 package com.example.jonathan.chat;
 
 import android.content.Intent;
-import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.ImageView;
 
-import com.example.jonathan.chat.Fragment.FragmentLoginAccountExisting;
-import com.example.jonathan.chat.Fragment.FragmentLoginNewAccount;
 import com.example.jonathan.chat.Fragment.FragmentRegisterSexe;
-import com.example.jonathan.chat.Utils.Tools;
 
-public class LoginActivity extends AppCompatActivity implements View.OnClickListener
-{
-
-    private ImageView backButton;
+public class RegisterActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_login);
+        setContentView(R.layout.activity_register);
 
-        backButton = (ImageView) findViewById(R.id.backButton);
-        backButton.setOnClickListener(this);
-
-        Fragment nextFragment;
-
-        // if we have an account saved, we display this account
-        if(!Tools.readFromPreferences(this, "username", "0").equals("0") && !Tools.readFromPreferences(this, "sexe", "0").equals("0")) {
-            nextFragment = new FragmentLoginAccountExisting();
-        } else { // display form to login with an other account
-            nextFragment = new FragmentLoginNewAccount();
-        }
-
+        FragmentRegisterSexe fragment = new FragmentRegisterSexe();
         FragmentManager fm = getSupportFragmentManager();
         FragmentTransaction transaction = fm.beginTransaction();
-        transaction.replace(R.id.accountFragment, nextFragment);
+        transaction.replace(R.id.contentFragment, fragment);
         transaction.commit();
     }
 
@@ -74,14 +54,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     private void backToHome(){
         Intent intent = new Intent(this, HomeActivity.class);
         finish();
-        overridePendingTransition(R.anim.anim_slide_in_left, R.anim.anim_slide_out_left);
+        overridePendingTransition(R.anim.anim_slide_in_right, R.anim.anim_slide_out_right);
         startActivity(intent);
-    }
-
-    @Override
-    public void onClick(View v) {
-        if(v == backButton){
-            backToHome();
-        }
     }
 }

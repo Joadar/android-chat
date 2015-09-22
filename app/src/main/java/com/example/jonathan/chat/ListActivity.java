@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -15,15 +16,20 @@ import android.widget.Toast;
 import com.example.jonathan.chat.Adapter.RoomAdapter;
 import com.example.jonathan.chat.Model.Room;
 import com.example.jonathan.chat.Utils.SocketServer;
+import com.example.jonathan.chat.Utils.Tools;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
 
+import io.socket.client.Socket;
 import io.socket.emitter.Emitter;
 
 public class ListActivity extends AppCompatActivity {
+
+    // activity
+    private Toolbar toolbar;
 
     // Rooms
     private Room room;
@@ -34,11 +40,21 @@ public class ListActivity extends AppCompatActivity {
 
     private SocketServer socketServer;
 
+    // boolean test
+    private boolean error;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_list);
+
+        error = false;
+
+        // toolbar
+        toolbar = (Toolbar) findViewById(R.id.app_bar);
+        toolbar.setTitle("Rooms");
+        setSupportActionBar(toolbar); // set our own toolbar
 
         Log.d("ListActivityLog", "onCreate");
 
@@ -55,17 +71,17 @@ public class ListActivity extends AppCompatActivity {
             public void onItemClick(View view, int position) {
 
                 // if view is not null
-                if(view != null){
+                if (view != null) {
 
                     // if view.getTag is not null
-                    if(view.getTag() != null){
+                    if (view.getTag() != null) {
 
                         // if view.getTag is equals to id "R.mipmap.nolike"
-                        if(view.getTag().equals(R.mipmap.nolike)) {
+                        if (view.getTag().equals(R.mipmap.nolike)) {
                             ImageView imageView = (ImageView) view;
                             imageView.setImageResource(R.mipmap.like);
                             imageView.setTag(R.mipmap.like);
-                        } else if (view.getTag().equals(R.mipmap.like)){
+                        } else if (view.getTag().equals(R.mipmap.like)) {
                             ImageView imageView = (ImageView) view;
                             imageView.setImageResource(R.mipmap.nolike);
                             imageView.setTag(R.mipmap.nolike);
@@ -74,6 +90,20 @@ public class ListActivity extends AppCompatActivity {
                         accessToRoom(position); // join the room at this position
                     }
                 }
+            }
+        });
+
+        // if the server have an error
+        socketServer.getInstance().getSocket().on(Socket.EVENT_CONNECT_ERROR, new Emitter.Listener() {
+
+            @Override
+            public void call(Object... args) {
+
+                if(!error) {
+                    error = true;
+                    closeActivity();
+                }
+
             }
         });
 
@@ -139,6 +169,13 @@ public class ListActivity extends AppCompatActivity {
 
     }
 
+    private void closeActivity(){
+        Tools.saveToPreferences(getApplicationContext(), "connected", "false");
+        Intent intent = new Intent(getApplicationContext(), HomeActivity.class);
+        this.finish();
+        startActivity(intent);
+    }
+
     @Override
     protected void onStart(){
         super.onStart();
@@ -173,21 +210,9 @@ public class ListActivity extends AppCompatActivity {
 
     private void init(){
 
-
-        /*
-            init() method called once but sockets more...
-
-            I DON'T UNDERSTAND THE PROBLEM !!
-
-            Hello World
-
-         */
-
-
-
         // if we haven't any socket, we go back to the login screen
         if(socketServer.getInstance().getSocket() == null){
-            Intent intent = new Intent(this, LoginActivity.class);
+            Intent intent = new Intent(this, RegisterActivity.class);
             startActivity(intent);
             this.finish();
         }
@@ -257,7 +282,13 @@ public class ListActivity extends AppCompatActivity {
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
+        if (id == R.id.action_logout) {
+
+            Tools.saveToPreferences(this, "connected", "false");
+
+            Intent intent = new Intent(this, HomeActivity.class);
+            startActivity(intent);
+
             return true;
         }
 

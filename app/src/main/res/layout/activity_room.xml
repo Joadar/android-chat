@@ -35,7 +35,7 @@
                 android:layout_below="@id/list_messages"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
-                android:background="@color/red"
+                android:background="@color/accentColor"
                 android:layout_weight=".5">
 
                 <TextView
@@ -51,7 +51,7 @@
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@color/black"
+                android:background="@color/lightPrimary"
                 android:layout_weight=".5">
 
                 <EditText

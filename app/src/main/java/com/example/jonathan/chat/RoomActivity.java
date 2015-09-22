@@ -3,7 +3,6 @@ package com.example.jonathan.chat;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.Color;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -18,19 +17,23 @@ import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.example.jonathan.chat.Adapter.MessageAdapter;
 import com.example.jonathan.chat.Fragment.NavigationDrawerFragment;
 import com.example.jonathan.chat.Model.Message;
+import com.example.jonathan.chat.Model.Room;
 import com.example.jonathan.chat.Utils.SocketServer;
 import com.example.jonathan.chat.Utils.Tools;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.net.ServerSocket;
 import java.util.ArrayList;
+import java.util.List;
 
+import io.socket.client.Socket;
 import io.socket.emitter.Emitter;
 
 public class RoomActivity extends AppCompatActivity implements TextWatcher {
@@ -43,6 +46,7 @@ public class RoomActivity extends AppCompatActivity implements TextWatcher {
     // Chat
     private String mUsername;
     private String mRoom;
+    private Room gRoom;
 
     // Message
     private ArrayList<Message> listMessages;
@@ -53,11 +57,15 @@ public class RoomActivity extends AppCompatActivity implements TextWatcher {
 
     private SocketServer socketServer;
 
+    private boolean error;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_room);
+
+        error = false;
 
         // action
         mAction = (TextView) findViewById(R.id.action);
@@ -75,7 +83,7 @@ public class RoomActivity extends AppCompatActivity implements TextWatcher {
         getSupportActionBar().setDisplayShowHomeEnabled(true);
 
         // Fragment for the drawer layout
-        NavigationDrawerFragment drawerFragment = (NavigationDrawerFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_navigation_drawer);
+        final NavigationDrawerFragment drawerFragment = (NavigationDrawerFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_navigation_drawer);
         drawerFragment.setUp(R.id.fragment_navigation_drawer, (DrawerLayout) findViewById(R.id.drawer_layout), toolbar);
 
         listMessages = new ArrayList<Message>();
@@ -117,6 +125,20 @@ public class RoomActivity extends AppCompatActivity implements TextWatcher {
             public void afterTextChanged(Editable s) {
                 socketServer.getInstance().getSocket().emit("end_writing", mUsername);
                 Log.d("RoomActivityLog", "afterTextChanged");
+            }
+        });
+
+        // if the server have an error
+        socketServer.getInstance().getSocket().on(Socket.EVENT_CONNECT_ERROR, new Emitter.Listener() {
+
+            @Override
+            public void call(Object... args) {
+
+                if(!error) {
+                    error = true;
+                    closeActivity();
+                }
+
             }
         });
 
@@ -228,6 +250,13 @@ public class RoomActivity extends AppCompatActivity implements TextWatcher {
 
     }
 
+    private void closeActivity(){
+        Tools.saveToPreferences(getApplicationContext(), "connected", "false");
+        Intent intent = new Intent(getApplicationContext(), HomeActivity.class);
+        this.finish();
+        startActivity(intent);
+    }
+
     @Override
     protected void onStart(){
         super.onStart();
@@ -251,7 +280,7 @@ public class RoomActivity extends AppCompatActivity implements TextWatcher {
 
         // if we haven't any socket, we go back to the login screen
         if(socketServer.getInstance().getSocket() == null){
-            Intent intent = new Intent(this, LoginActivity.class);
+            Intent intent = new Intent(this, RegisterActivity.class);
             startActivity(intent);
             this.finish();
         }
@@ -360,7 +389,50 @@ public class RoomActivity extends AppCompatActivity implements TextWatcher {
 
     }
 
-    public String getRoom() {
-        return mRoom;
+
+    public void getRoom(){
+
+        // Add room to list rooms
+        final Room room = new Room();
+        gRoom = new Room();
+
+        SocketServer.getInstance().getSocket().emit("room", mRoom);
+        socketServer.getInstance().getSocket().on("room", new Emitter.Listener() {
+
+            @Override
+            public void call(final Object... args) {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+
+                        JSONObject data = (JSONObject) args[0];
+
+                        String name;
+                        int space;
+                        int nbUser;
+                        String image;
+                        try {
+                            name = data.getString("name");
+                            space = data.getInt("space");
+                            nbUser = data.getInt("nb_user");
+                            image = data.getString("image");
+                        } catch (JSONException e) {
+                            return;
+                        }
+                        room.setName(name);
+                        room.setSpace(space);
+                        room.setNbUser(nbUser);
+                        room.setImage(image);
+
+                        gRoom = room;
+                    }
+                });
+            }
+        });
+    }
+
+    public final String getImageRoom(){
+        getRoom();
+        return gRoom.getImage();
     }
 }

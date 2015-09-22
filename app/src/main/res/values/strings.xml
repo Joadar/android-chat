@@ -6,7 +6,18 @@
     <string name="title_activity_login">LoginActivity</string>
     <string name="title_activity_list">ListActivity</string>
 
+    <!-- Home activity -->
+    <string name="register">Register</string>
+    <string name="presentationAppContent">Come to talk to other people from around the world about specific subject!</string>
+
     <!-- Login activity -->
+    <string name="accountChoice">Account choice </string>
+    <string name="changeAccount"><u>Change account</u></string>
+
+    <string name="password">Password</string>
+    <string name="useAccountSaved"><u>Use account saved</u></string>
+
+    <!-- Register activity -->
     <string name="descriptionChoiceSexeTitle">Who are you?</string>
     <string name="descriptionChoiceSexeContent">Are you a boy or a girl?</string>
 
@@ -23,6 +34,7 @@
 
     <!-- Room list -->
     <string name="room_list">Rooms list</string>
+    <string name="action_logout">Logout</string>
 
     <!-- Room activity -->
     <string name="author">Author</string>
@@ -31,5 +43,6 @@
 
     <string name="drawer_open">Open</string>
     <string name="drawer_close">Close</string>
+    <string name="title_activity_home">HomeActivity</string>
 
 </resources>
