@@ -11,9 +11,8 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.TextView;
+import android.widget.Toast;
 
-import com.example.jonathan.chat.HomeActivity;
 import com.example.jonathan.chat.ListActivity;
 import com.example.jonathan.chat.R;
 import com.example.jonathan.chat.Utils.SocketServer;
@@ -21,12 +20,19 @@ import com.example.jonathan.chat.Utils.Tools;
 
 import org.json.JSONObject;
 
+import java.net.Socket;
+
+import io.socket.emitter.Emitter;
+
 /**
  * Created by Jonathan on 21/09/15.
  */
 public class FragmentRegisterUsername extends Fragment implements View.OnClickListener {
 
     private EditText usernameText;
+    private EditText passwordText;
+    private EditText passwordRepeatText;
+
     private Button loginButton;
 
     private ImageView backButton;
@@ -37,9 +43,12 @@ public class FragmentRegisterUsername extends Fragment implements View.OnClickLi
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View view = inflater.inflate(R.layout.fragment_register_username, container, false);
+        final View view = inflater.inflate(R.layout.fragment_register_username, container, false);
 
         usernameText = (EditText) view.findViewById(R.id.username);
+        passwordText = (EditText) view.findViewById(R.id.password);
+        passwordRepeatText = (EditText) view.findViewById(R.id.passwordRepeat);
+
         loginButton = (Button) view.findViewById(R.id.login);
         backButton = (ImageView) view.findViewById(R.id.backButton);
 
@@ -47,7 +56,7 @@ public class FragmentRegisterUsername extends Fragment implements View.OnClickLi
         Bundle data = this.getArguments();
         sexeUser = (String) data.get("sexe");
         // if the user is a boy
-        if (sexeUser.equals("boy")){
+        if (sexeUser.equals("1")){
             loginButton.setBackgroundResource(R.drawable.button_boy); // put the button color in blue
         } else {
             loginButton.setBackgroundResource(R.drawable.button_girl); // put the button color in pink
@@ -69,32 +78,69 @@ public class FragmentRegisterUsername extends Fragment implements View.OnClickLi
     }
 
     private void login(){
-        // just for test if the username is empty
-        if(usernameText.length() != 0){
+        // just for test if the username is empty AND if the password and repeat password are empty and if password and repeat password have the same value
+        //if(usernameText.length() != 0 && passwordText.length() != 0 &&
+          //      passwordText.getText().toString() == passwordRepeatText.getText().toString()){
 
             // if the server is not disconnected, we can access to the rest
             if(!SocketServer.getInstance().isDisconnected()) {
 
-                Tools.saveToPreferences(getContext(), "username", usernameText.getText().toString());
-                Tools.saveToPreferences(getContext(), "connected", "true");
+                // first we emit an user register
 
                 // Sending an object
-                JSONObject obj = new JSONObject();
+                JSONObject newUser = new JSONObject();
                 try {
-                    obj.put("username", usernameText.getText().toString());
-                    obj.put("sexe", sexeUser);
+                    newUser.put("username", usernameText.getText().toString());
+                    newUser.put("password", passwordText.getText().toString());
+                    newUser.put("sexe", sexeUser);
                 } catch (Exception e) {
 
                 }
 
-                // instance the socket with the username
-                SocketServer.getInstance().getSocket().emit("new_user", obj);
+                SocketServer.getInstance().getSocket().emit("user_register", newUser);
 
-                Intent intent = new Intent(getContext(), ListActivity.class);
-                getActivity().finish();
-                startActivity(intent);
+                // get rooms one by one
+                SocketServer.getInstance().getSocket().on("user_register_fail", new Emitter.Listener() {
+
+                    @Override
+                    public void call(final Object... args) {
+                        Log.d("RegisterLog", "register fail");
+                    }
+                });
+
+                SocketServer.getInstance().getSocket().on("user_register_success", new Emitter.Listener() {
+
+                    @Override
+                    public void call(final Object... args) {
+                        // second we emit the user login if there is no problem before
+
+                        Log.d("RegisterLog", "register success");
+
+                        Tools.saveToPreferences(getContext(), "username", usernameText.getText().toString());
+                        Tools.saveToPreferences(getContext(), "connected", "true");
+
+                        // Sending an object
+                        JSONObject obj = new JSONObject();
+                        try {
+                            obj.put("username", usernameText.getText().toString());
+                            obj.put("sexe", sexeUser);
+                        } catch (Exception e) {
+
+                        }
+
+                        // instance the socket with the username
+                        SocketServer.getInstance().getSocket().emit("new_user", obj);
+
+                        Intent intent = new Intent(getContext(), ListActivity.class);
+                        getActivity().finish();
+                        startActivity(intent);
+                    }
+                });
+
+            } else {
+                Toast.makeText(getContext(), "Server not connected", Toast.LENGTH_LONG).show();
             }
-        }
+        //}
     }
 
     private void backToSexeChoice(){

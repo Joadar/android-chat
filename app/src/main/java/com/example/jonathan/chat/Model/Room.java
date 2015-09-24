@@ -10,6 +10,7 @@ public class Room {
     private int space; // number place total
     private int nbUser; // number user in this room
     private String image; // url image
+    private boolean like; // if user like this room
 
     public int getId() {
         return id;
@@ -49,5 +50,13 @@ public class Room {
 
     public void setImage(String image) {
         this.image = image;
+    }
+
+    public boolean isLike() {
+        return like;
+    }
+
+    public void setLike(boolean like) {
+        this.like = like;
     }
 }

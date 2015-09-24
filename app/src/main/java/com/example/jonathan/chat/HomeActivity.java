@@ -3,15 +3,19 @@ package com.example.jonathan.chat;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.Toast;
 
 import com.example.jonathan.chat.Utils.SocketServer;
 import com.example.jonathan.chat.Utils.Tools;
 
 import org.json.JSONObject;
+
+import io.socket.emitter.Emitter;
 
 public class HomeActivity extends AppCompatActivity implements View.OnClickListener {
 
@@ -27,27 +31,62 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         SocketServer.getInstance();
 
         // if the server is not disconnected, we can access to the rest
-        if(!SocketServer.getInstance().isDisconnected()) {
+        if (!SocketServer.getInstance().isDisconnected()) {
 
             // if the user is still connected without logout manually, then he pass directly on the list activity
-            if (Tools.readFromPreferences(this, "connected", "0").equals("true")) {
+            if (Tools.readFromPreferences(this, "connected", null) != null && Tools.readFromPreferences(this, "connected", null).equals("true")) {
+
                 // Sending an object
                 JSONObject obj = new JSONObject();
                 try {
                     obj.put("username", Tools.readFromPreferences(this, "username", null));
-                    obj.put("sexe", Tools.readFromPreferences(this, "sexe", "0"));
+                    obj.put("sexe", Tools.readFromPreferences(this, "sexe", null));
+                    obj.put("password", Tools.readFromPreferences(this, "password", null));
                 } catch (Exception e) {
 
                 }
 
-                // instance the socket with the username
+                // emit the new user
                 SocketServer.getInstance().getSocket().emit("new_user", obj);
 
-                Intent intent = new Intent(this, ListActivity.class);
-                finish();
-                startActivity(intent);
+                SocketServer.getInstance().getSocket().on("logged", new Emitter.Listener() {
+
+                    @Override
+                    public void call(final Object... args) {
+
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                Tools.saveToPreferences(getApplicationContext(), "connected", "true");
+                                Tools.saveToPreferences(getApplicationContext(), "username", Tools.readFromPreferences(getApplicationContext(), "username", null));
+                                Tools.saveToPreferences(getApplicationContext(), "password", Tools.readFromPreferences(getApplicationContext(), "password", null));
+                                Tools.saveToPreferences(getApplicationContext(), "sexe", String.valueOf(args[0]));
+
+                                Intent intent = new Intent(getApplicationContext(), ListActivity.class);
+                                finish();
+                                startActivity(intent);
+                            }
+                        });
+                    }
+                });
+
+                SocketServer.getInstance().getSocket().on("error_user", new Emitter.Listener() {
+
+                    @Override
+                    public void call(final Object... args) {
+
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                Toast.makeText(getApplicationContext(), "Error about the account", Toast.LENGTH_LONG).show();
+                            }
+                        });
+                    }
+                });
             }
         }
+
+
 
         loginButton = (Button) findViewById(R.id.loginButton);
         registerButton = (Button) findViewById(R.id.registerButton);

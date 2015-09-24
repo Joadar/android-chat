@@ -31,6 +31,7 @@
 
     <string name="username">Username</string>
     <string name="login">Login</string>
+    <string name="repeat_password">Repeat password</string>
 
     <!-- Room list -->
     <string name="room_list">Rooms list</string>

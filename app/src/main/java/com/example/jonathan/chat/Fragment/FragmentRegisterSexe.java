@@ -55,9 +55,9 @@ public class FragmentRegisterSexe extends Fragment implements View.OnClickListen
     @Override
     public void onClick(View v) {
         if(v == boyButton){
-            nextFragment("boy"); // pass to next fragment with "boy" as value sexe argument
+            nextFragment("1"); // pass to next fragment with "boy" as value sexe argument
         } else if (v == girlButton){
-            nextFragment("girl"); // pass to next fragment with "girl" as value sexe argument
+            nextFragment("0"); // pass to next fragment with "girl" as value sexe argument
         } else if (v == backButton){
             Intent intent = new Intent(getContext(), HomeActivity.class);
             getActivity().finish();

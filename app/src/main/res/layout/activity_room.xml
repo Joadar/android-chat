@@ -66,14 +66,14 @@
 
     </RelativeLayout>
 
-        <fragment
+        <!--<fragment
             android:id="@+id/fragment_navigation_drawer"
             android:layout_width="280dp"
             android:layout_height="match_parent"
             android:layout_gravity="start"
             app:layout="@layout/fragment_navigation_drawer"
             android:name="com.example.jonathan.chat.Fragment.NavigationDrawerFragment"
-            tools:layout="@layout/fragment_navigation_drawer" />
+            tools:layout="@layout/fragment_navigation_drawer" />-->
 
 
 </android.support.v4.widget.DrawerLayout>

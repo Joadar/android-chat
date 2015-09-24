@@ -2,6 +2,7 @@ package com.example.jonathan.chat.Adapter;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -45,6 +46,19 @@ public class RoomAdapter extends RecyclerView.Adapter<RoomAdapter.MyViewHolder> 
         Room current = rooms.get(position);
         holder.name.setText(current.getName());
         holder.space.setText("User : " + current.getNbUser() + "/" + current.getSpace());
+
+        Log.d("likeLog", "Adapter current.isLike() = " + current.isLike());
+
+        // if user like this room, put the like on
+        if(current.isLike()) {
+            holder.like.setImageResource(R.mipmap.like);
+            holder.like.setTag(R.mipmap.like);
+        } else {
+            holder.like.setImageResource(R.mipmap.nolike);
+            holder.like.setTag(R.mipmap.nolike);
+        }
+
+
         new ImageLoadTask(current.getImage(), holder.image).execute(); // put the string image in the image view
     }
 

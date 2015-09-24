@@ -23,7 +23,7 @@
             android:id="@+id/password"
             android:hint="@string/password"
             android:layout_below="@id/username"
-            android:inputType="textVisiblePassword"
+            android:inputType="textPassword"
             android:layout_width="200dp"
             android:layout_height="wrap_content"/>
 

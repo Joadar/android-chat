@@ -15,7 +15,7 @@
             android:id="@+id/backButton"
             android:src="@mipmap/right_arrow"
             android:gravity="center"
-            android:padding="4dp"
+            android:padding="16dp"
             android:layout_centerInParent="true"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"/>
@@ -23,12 +23,14 @@
     </RelativeLayout>
 
     <RelativeLayout
+        android:id="@+id/layoutFragment"
         android:paddingTop="56dp"
         android:layout_centerHorizontal="true"
         android:layout_width="wrap_content"
         android:layout_height="match_parent">
 
         <TextView
+            android:id="@+id/accountChoice"
             android:text="@string/accountChoice"
             style="@style/title"
             android:layout_centerHorizontal="true"

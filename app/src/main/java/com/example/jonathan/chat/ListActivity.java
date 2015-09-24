@@ -51,6 +51,8 @@ public class ListActivity extends AppCompatActivity {
 
         error = false;
 
+        Log.d("ListLOG", Tools.readFromPreferences(this, "connected", null));
+
         // toolbar
         toolbar = (Toolbar) findViewById(R.id.app_bar);
         toolbar.setTitle("Rooms");
@@ -78,13 +80,30 @@ public class ListActivity extends AppCompatActivity {
 
                         // if view.getTag is equals to id "R.mipmap.nolike"
                         if (view.getTag().equals(R.mipmap.nolike)) {
+
                             ImageView imageView = (ImageView) view;
                             imageView.setImageResource(R.mipmap.like);
                             imageView.setTag(R.mipmap.like);
+
+                            Room iRoom = listRooms.get(position);
+                            iRoom.setLike(true);
+                            roomAdapter.notifyDataSetChanged();
+
+                            Log.d("likeLog", "(" + iRoom.getName() + ") - room liked = " + listRooms.get(position).getName());
+                            SocketServer.getInstance().getSocket().emit("like_room", listRooms.get(position).getName());
+
                         } else if (view.getTag().equals(R.mipmap.like)) {
+
                             ImageView imageView = (ImageView) view;
                             imageView.setImageResource(R.mipmap.nolike);
                             imageView.setTag(R.mipmap.nolike);
+
+                            Room iRoom = listRooms.get(position);
+                            iRoom.setLike(false);
+                            roomAdapter.notifyDataSetChanged();
+
+                            SocketServer.getInstance().getSocket().emit("unlike_room", listRooms.get(position).getName());
+
                         }
                     } else {
                         accessToRoom(position); // join the room at this position
@@ -142,11 +161,14 @@ public class ListActivity extends AppCompatActivity {
                         int space;
                         int nbUser;
                         String image;
+                        boolean like;
                         try {
                             name = data.getString("name");
                             space = data.getInt("space");
                             nbUser = data.getInt("nb_user");
                             image = data.getString("image");
+                            like = data.getBoolean("like");
+
                         } catch (JSONException e) {
                             return;
                         }
@@ -157,11 +179,11 @@ public class ListActivity extends AppCompatActivity {
                         room.setSpace(space);
                         room.setNbUser(nbUser);
                         room.setImage(image);
+                        room.setLike(like);
                         listRooms.add(room);
                         roomAdapter.notifyDataSetChanged();
 
                         Log.d("ListActivityLog", "listRooms size = " + listRooms.size());
-
                     }
                 });
             }

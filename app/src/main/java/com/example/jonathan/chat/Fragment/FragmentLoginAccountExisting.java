@@ -13,13 +13,17 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.jonathan.chat.ListActivity;
 import com.example.jonathan.chat.R;
 import com.example.jonathan.chat.Utils.SocketServer;
 import com.example.jonathan.chat.Utils.Tools;
 
+import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.util.EventListener;
 
 import io.socket.client.Socket;
 import io.socket.emitter.Emitter;
@@ -52,7 +56,7 @@ public class FragmentLoginAccountExisting extends Fragment implements View.OnCli
         username.setText(Tools.readFromPreferences(getContext(), "username", null));
 
         // change the button color and the avatar with the sexe user
-        if(Tools.readFromPreferences(getContext(), "sexe", "0").equals("boy")){
+        if(Tools.readFromPreferences(getContext(), "sexe", null).equals("1")){
             loginButton.setBackgroundResource(R.drawable.button_boy); // put the button color in blue
             avatar.setImageResource(R.mipmap.boy);
         } else {
@@ -70,13 +74,12 @@ public class FragmentLoginAccountExisting extends Fragment implements View.OnCli
             // if the server is not disconnected, we can access to the rest
             if(!SocketServer.getInstance().isDisconnected()) {
 
-                Tools.saveToPreferences(getContext(), "connected", "true");
-
                 // Sending an object
                 JSONObject obj = new JSONObject();
                 try {
                     obj.put("username", Tools.readFromPreferences(getContext(), "username", null));
-                    obj.put("sexe", Tools.readFromPreferences(getContext(), "sexe", "0"));
+                    obj.put("sexe", Tools.readFromPreferences(getContext(), "sexe", null));
+                    obj.put("password", Tools.readFromPreferences(getContext(), "password", null));
                 } catch(Exception e){
 
                 }
@@ -84,9 +87,39 @@ public class FragmentLoginAccountExisting extends Fragment implements View.OnCli
                 // emit the new user
                 SocketServer.getInstance().getSocket().emit("new_user", obj);
 
-                Intent intent = new Intent(getContext(), ListActivity.class);
-                getActivity().finish();
-                startActivity(intent);
+                SocketServer.getInstance().getSocket().on("logged", new Emitter.Listener() {
+
+                    @Override
+                    public void call(final Object... args) {
+
+                        // check if activity is still alive
+                        if(getActivity() == null)
+                            return;
+
+                        Tools.saveToPreferences(getContext(), "connected", "true");
+
+                        Intent intent = new Intent(getContext(), ListActivity.class);
+                        getActivity().finish();
+                        startActivity(intent);
+
+                    }
+                });
+
+                SocketServer.getInstance().getSocket().on("error_user", new Emitter.Listener() {
+
+                    @Override
+                    public void call(final Object... args) {
+
+                        getActivity().runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                Toast.makeText(getContext(), "Error about the account", Toast.LENGTH_LONG).show();
+                            }
+                        });
+                    }
+                });
+            } else {
+                Toast.makeText(getContext(), "Server not connected", Toast.LENGTH_LONG).show();
             }
 
         } else if (v == changeAccount) { // display fragment login new account
