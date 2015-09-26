@@ -46,4 +46,10 @@
     <string name="drawer_close">Close</string>
     <string name="title_activity_home">HomeActivity</string>
 
+    <string name="go">Go</string>
+
+    <!-- Profile's user -->
+    <string name="send_request">Send a friend request</string>
+    <string name="title_activity_friend">FriendActivity</string>
+
 </resources>

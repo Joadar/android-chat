@@ -1,6 +1,7 @@
 package com.example.jonathan.chat;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
@@ -12,12 +13,14 @@ import android.view.View;
 import android.support.v7.widget.RecyclerView;
 import android.widget.ImageView;
 import android.widget.Toast;
+import android.support.design.widget.Snackbar;
 
 import com.example.jonathan.chat.Adapter.RoomAdapter;
 import com.example.jonathan.chat.Model.Room;
 import com.example.jonathan.chat.Utils.SocketServer;
 import com.example.jonathan.chat.Utils.Tools;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -27,6 +30,9 @@ import io.socket.client.Socket;
 import io.socket.emitter.Emitter;
 
 public class ListActivity extends AppCompatActivity {
+
+    // friend
+    private int idFriendRequest;
 
     // activity
     private Toolbar toolbar;
@@ -51,14 +57,10 @@ public class ListActivity extends AppCompatActivity {
 
         error = false;
 
-        Log.d("ListLOG", Tools.readFromPreferences(this, "connected", null));
-
         // toolbar
         toolbar = (Toolbar) findViewById(R.id.app_bar);
         toolbar.setTitle("Rooms");
         setSupportActionBar(toolbar); // set our own toolbar
-
-        Log.d("ListActivityLog", "onCreate");
 
         listRooms = new ArrayList<Room>();
 
@@ -89,7 +91,6 @@ public class ListActivity extends AppCompatActivity {
                             iRoom.setLike(true);
                             roomAdapter.notifyDataSetChanged();
 
-                            Log.d("likeLog", "(" + iRoom.getName() + ") - room liked = " + listRooms.get(position).getName());
                             SocketServer.getInstance().getSocket().emit("like_room", listRooms.get(position).getName());
 
                         } else if (view.getTag().equals(R.mipmap.like)) {
@@ -137,9 +138,6 @@ public class ListActivity extends AppCompatActivity {
                         // delete all rooms from list
                         listRooms.clear();
                         roomAdapter.notifyDataSetChanged();
-
-                        Log.d("ListActivityLog", "Rooms are comiiiiiiiiiing!");
-
                     }
                 });
             }
@@ -155,7 +153,6 @@ public class ListActivity extends AppCompatActivity {
                     public void run() {
 
                         JSONObject data = (JSONObject) args[0];
-                        Log.d("ListActivityLog", "args[0] = " + args[0]);
 
                         String name;
                         int space;
@@ -182,8 +179,6 @@ public class ListActivity extends AppCompatActivity {
                         room.setLike(like);
                         listRooms.add(room);
                         roomAdapter.notifyDataSetChanged();
-
-                        Log.d("ListActivityLog", "listRooms size = " + listRooms.size());
                     }
                 });
             }
@@ -230,16 +225,16 @@ public class ListActivity extends AppCompatActivity {
         Log.d("ListActivityLog", "onStop");
     }
 
-    private void init(){
+    private void init() {
+        // ask the server if we have some friend request
+        SocketServer.getInstance().getSocket().emit("have_friend_request");
 
         // if we haven't any socket, we go back to the login screen
-        if(socketServer.getInstance().getSocket() == null){
+        if (socketServer.getInstance().getSocket() == null) {
             Intent intent = new Intent(this, RegisterActivity.class);
             startActivity(intent);
             this.finish();
         }
-
-        Log.d("ListActivityLog", "init called");
 
         // need all rooms from the server
         socketServer.getInstance().getSocket().emit("rooms");
@@ -282,11 +277,70 @@ public class ListActivity extends AppCompatActivity {
                             listRooms.get(position).setNbUser(nbUser);
                             roomAdapter.notifyDataSetChanged();
                         }
-                        Log.d("ListActivityLog", "edit room = " + listRooms.size());
                     }
                 });
             }
         });
+
+        // check our friends request
+        SocketServer.getInstance().getSocket().on("have_friend_request", new Emitter.Listener() {
+            @Override
+            public void call(final Object... args) {
+
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+
+                        String username;
+                        int idUsername;
+
+                        Log.d("ListActivityLog", "have_friend_request args = " + args[0]);
+                        if(args[0].getClass().getSimpleName().equals("JSONArray")) {
+                            JSONArray data = (JSONArray) args[0];
+
+                            try {
+                                username = (String) data.getJSONObject(0).get("username");
+                                idUsername = (int) data.getJSONObject(0).get("user_id");
+                            } catch (JSONException e) {
+                                return;
+                            }
+                        } else {
+                            JSONObject data = (JSONObject) args[0];
+                            try {
+                                username = data.getString("username");
+                                idUsername = data.getInt("user_id");
+                            } catch (JSONException e) {
+                                return;
+                            }
+                        }
+
+
+                        idFriendRequest = idUsername;
+
+                        snackbar();
+                    }
+                });
+            }
+        });
+    }
+
+    private void snackbar(){
+        Log.d("ListActivityLog", "snackbar method called");
+
+        // event for the snackbar
+        final View.OnClickListener clickListener = new View.OnClickListener() {
+            public void onClick(View v) {
+                // when we click on the button, we are redirected to the friend activity
+                startActivity(new Intent(getApplicationContext(), FriendActivity.class));
+            }
+        };
+
+        final View coordinatorLayoutView = findViewById(R.id.snackbarPosition);
+
+        // make list view of friends request
+        Snackbar.make(coordinatorLayoutView, "You have new friend requests", Snackbar.LENGTH_INDEFINITE)
+                .setAction("See", clickListener)
+                .show();
     }
 
     @Override
@@ -331,7 +385,6 @@ public class ListActivity extends AppCompatActivity {
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        Log.d("ListActivityLog", "full_room received");
 
                         JSONObject data = (JSONObject) args[0];
                         boolean roomFull;

@@ -8,14 +8,12 @@ import android.support.v4.app.FragmentTransaction;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.ImageView;
 
 import com.example.jonathan.chat.HomeActivity;
 import com.example.jonathan.chat.R;
-import com.example.jonathan.chat.Utils.Tools;
 
 /**
  * Created by Jonathan on 21/09/15.

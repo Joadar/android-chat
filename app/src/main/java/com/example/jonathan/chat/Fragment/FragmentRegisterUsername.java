@@ -20,8 +20,6 @@ import com.example.jonathan.chat.Utils.Tools;
 
 import org.json.JSONObject;
 
-import java.net.Socket;
-
 import io.socket.emitter.Emitter;
 
 /**
@@ -104,7 +102,7 @@ public class FragmentRegisterUsername extends Fragment implements View.OnClickLi
 
                     @Override
                     public void call(final Object... args) {
-                        Log.d("RegisterLog", "register fail");
+                        Toast.makeText(getContext(), "Error, try again", Toast.LENGTH_LONG).show();
                     }
                 });
 
@@ -113,8 +111,6 @@ public class FragmentRegisterUsername extends Fragment implements View.OnClickLi
                     @Override
                     public void call(final Object... args) {
                         // second we emit the user login if there is no problem before
-
-                        Log.d("RegisterLog", "register success");
 
                         Tools.saveToPreferences(getContext(), "username", usernameText.getText().toString());
                         Tools.saveToPreferences(getContext(), "connected", "true");

@@ -2,7 +2,6 @@ package com.example.jonathan.chat.Adapter;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -42,7 +41,7 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.MyViewHolder> 
     @Override
     public void onBindViewHolder(MyViewHolder holder, int position) {
         User current = data.get(position);
-        holder.username.setText(current.username);
+        holder.username.setText(current.getUsername());
     }
 
     @Override
@@ -62,7 +61,6 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.MyViewHolder> 
 
         @Override
         public void onClick(View v) {
-            Log.d("test", "click = " + getPosition());
             delete(getPosition());
         }
     }

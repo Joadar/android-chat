@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,12 +19,9 @@ import com.example.jonathan.chat.R;
 import com.example.jonathan.chat.Utils.SocketServer;
 import com.example.jonathan.chat.Utils.Tools;
 
-import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.EventListener;
 
-import io.socket.client.Socket;
 import io.socket.emitter.Emitter;
 
 /**

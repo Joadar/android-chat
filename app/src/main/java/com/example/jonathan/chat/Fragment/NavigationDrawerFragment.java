@@ -9,17 +9,13 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 
 import com.example.jonathan.chat.Adapter.UserAdapter;
 import com.example.jonathan.chat.Model.User;
 import com.example.jonathan.chat.R;
-import com.example.jonathan.chat.RoomActivity;
-import com.example.jonathan.chat.Utils.ImageLoadTask;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -83,7 +79,7 @@ public class NavigationDrawerFragment extends Fragment {
         String[] usernames = {"Jonathan", "Eliot", "Dylan", "Cedric", "Loic", "Fiji", "Ines", "Athena"};
         for(int i = 0; i < usernames.length; i++){
             User current = new User();
-            current.username = usernames[i];
+            current.setUsername(usernames[i]);
             data.add(current);
         }
 

@@ -27,7 +27,7 @@
         <activity
             android:name=".LoginActivity"
             android:label="@string/title_activity_login"
-            android:windowSoftInputMode="adjustResize|stateHidden">
+            android:windowSoftInputMode="adjustResize|stateHidden" >
         </activity>
         <activity
             android:name=".HomeActivity"
@@ -37,6 +37,10 @@
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+        </activity>
+        <activity
+            android:name=".FriendActivity"
+            android:label="@string/title_activity_friend" >
         </activity>
     </application>
 

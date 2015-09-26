@@ -9,9 +9,9 @@ public class Message {
 
     private int id;
     private int roomId;
-    private String author;
+    private User author;
     private String message;
-    private int color;
+    private boolean information;
 
     public int getId() {
         return id;
@@ -29,11 +29,11 @@ public class Message {
         this.roomId = roomId;
     }
 
-    public String getAuthor() {
+    public User getAuthor() {
         return author;
     }
 
-    public void setAuthor(String author) {
+    public void setAuthor(User author) {
         this.author = author;
     }
 
@@ -45,11 +45,11 @@ public class Message {
         this.message = message;
     }
 
-    public int getColor() {
-        return color;
+    public boolean isInformation() {
+        return information;
     }
 
-    public void setColor(int color) {
-        this.color = color;
+    public void setInformation(boolean information) {
+        this.information = information;
     }
 }
