@@ -2,6 +2,8 @@ package com.example.jonathan.chat;
 
 import android.content.Intent;
 import android.graphics.Color;
+import android.support.v4.app.ActionBarDrawerToggle;
+import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
@@ -12,10 +14,13 @@ import android.view.MenuItem;
 import android.view.View;
 import android.support.v7.widget.RecyclerView;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.Toast;
 import android.support.design.widget.Snackbar;
 
+import com.example.jonathan.chat.Adapter.MenuAdapter;
 import com.example.jonathan.chat.Adapter.RoomAdapter;
+import com.example.jonathan.chat.Fragment.NavigationDrawerFragment;
 import com.example.jonathan.chat.Model.Room;
 import com.example.jonathan.chat.Utils.SocketServer;
 import com.example.jonathan.chat.Utils.Tools;
@@ -25,6 +30,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import io.socket.client.Socket;
 import io.socket.emitter.Emitter;
@@ -49,7 +55,6 @@ public class ListActivity extends AppCompatActivity {
     // boolean test
     private boolean error;
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -61,6 +66,12 @@ public class ListActivity extends AppCompatActivity {
         toolbar = (Toolbar) findViewById(R.id.app_bar);
         toolbar.setTitle("Rooms");
         setSupportActionBar(toolbar); // set our own toolbar
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
+
+        // Fragment for the drawer layout
+        final NavigationDrawerFragment drawerFragment = (NavigationDrawerFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_navigation_drawer);
+        drawerFragment.setUp(R.id.fragment_navigation_drawer, (DrawerLayout) findViewById(R.id.drawer_layout), toolbar);
+
 
         listRooms = new ArrayList<Room>();
 
@@ -291,33 +302,10 @@ public class ListActivity extends AppCompatActivity {
                     @Override
                     public void run() {
 
-                        String username;
-                        int idUsername;
-
                         Log.d("ListActivityLog", "have_friend_request args = " + args[0]);
-                        if(args[0].getClass().getSimpleName().equals("JSONArray")) {
-                            JSONArray data = (JSONArray) args[0];
-
-                            try {
-                                username = (String) data.getJSONObject(0).get("username");
-                                idUsername = (int) data.getJSONObject(0).get("user_id");
-                            } catch (JSONException e) {
-                                return;
-                            }
-                        } else {
-                            JSONObject data = (JSONObject) args[0];
-                            try {
-                                username = data.getString("username");
-                                idUsername = data.getInt("user_id");
-                            } catch (JSONException e) {
-                                return;
-                            }
+                        if(args[0] != null){
+                            snackbar();
                         }
-
-
-                        idFriendRequest = idUsername;
-
-                        snackbar();
                     }
                 });
             }

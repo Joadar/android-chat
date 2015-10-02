@@ -120,7 +120,6 @@ public class RoomActivity extends AppCompatActivity implements TextWatcher, View
                 if(count != 0)
                     SocketServer.getInstance().getSocket().emit("writing", mUsername);
 
-                // wait 3 seconds before call aftertextchanged
             }
 
             @Override

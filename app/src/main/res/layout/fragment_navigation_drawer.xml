@@ -7,26 +7,29 @@
     android:background="@color/white"
     tools:context="com.example.jonathan.chat.Fragment.NavigationDrawerFragment">
 
-    <LinearLayout
+    <RelativeLayout
         android:id="@+id/containerDrawerImage"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_width="280dp"
+        android:layout_height="140dp"
+        android:layout_marginBottom="16dp"
+        android:background="@color/primary">
 
-        <ImageView
-            android:id="@+id/imageRoom"
-            android:layout_width="280dp"
-            android:layout_height="140dp"
+        <TextView
+            android:id="@+id/session_username"
+            android:text="@string/author"
+            android:textColor="@android:color/white"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_marginBottom="16dp"
-            android:scaleType="centerCrop"/>
+            android:layout_marginLeft="16dp"
+            android:layout_alignParentBottom="true"/>
 
-    </LinearLayout>
+    </RelativeLayout>
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/drawerListUser"
         android:layout_below="@id/containerDrawerImage"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-
-    </android.support.v7.widget.RecyclerView>
+        android:layout_height="wrap_content"/>
 
 </RelativeLayout>

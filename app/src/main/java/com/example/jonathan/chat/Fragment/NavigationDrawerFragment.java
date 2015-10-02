@@ -2,6 +2,7 @@ package com.example.jonathan.chat.Fragment;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.content.res.TypedArray;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.DrawerLayout;
@@ -12,10 +13,12 @@ import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
-import com.example.jonathan.chat.Adapter.UserAdapter;
-import com.example.jonathan.chat.Model.User;
+import com.example.jonathan.chat.Adapter.MenuAdapter;
+import com.example.jonathan.chat.Model.MenuItem;
 import com.example.jonathan.chat.R;
+import com.example.jonathan.chat.Utils.Tools;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -39,10 +42,11 @@ public class NavigationDrawerFragment extends Fragment {
     private boolean mFromSavedInstanceState;
 
     private View containerView;
+    private TextView sessionUsername;
 
-    private UserAdapter userAdapter;
+    private MenuAdapter menuAdapter;
 
-    private List<User> data;
+    private List<MenuItem> data;
 
     public NavigationDrawerFragment() {
         // Required empty public constructor
@@ -52,7 +56,7 @@ public class NavigationDrawerFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        mUserLearnedDrawer = Boolean.valueOf(readFromPreferences(getActivity(), KEY_USER_LEARNED_DRAWER, "false"));
+        mUserLearnedDrawer = Boolean.valueOf(Tools.readFromPreferences(getActivity(), KEY_USER_LEARNED_DRAWER, "false"));
         if(savedInstanceState != null){
             mFromSavedInstanceState = true;
         }
@@ -63,24 +67,29 @@ public class NavigationDrawerFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View layout = inflater.inflate(R.layout.fragment_navigation_drawer, container, false);
-        //recyclerView = (RecyclerView) layout.findViewById(R.id.drawerListUser);
+        recyclerView = (RecyclerView) layout.findViewById(R.id.drawerListUser);
+        sessionUsername = (TextView) layout.findViewById(R.id.session_username);
 
-        userAdapter = new UserAdapter(getActivity(), getData());
-        recyclerView.setAdapter(userAdapter);
+        menuAdapter = new MenuAdapter(getActivity(), getData());
+        recyclerView.setAdapter(menuAdapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+
+        sessionUsername.setText(Tools.readFromPreferences(getContext(), "username", null));
 
         data = new ArrayList<>();
 
         return layout;
     }
 
-    public List<User> getData(){
-        List<User> data = new ArrayList<>();
-        String[] usernames = {"Jonathan", "Eliot", "Dylan", "Cedric", "Loic", "Fiji", "Ines", "Athena"};
-        for(int i = 0; i < usernames.length; i++){
-            User current = new User();
-            current.setUsername(usernames[i]);
-            data.add(current);
+    public List<MenuItem> getData(){
+        List<MenuItem> data = new ArrayList<>();
+
+        String[] titles = getResources().getStringArray(R.array.titles_link);
+        TypedArray icons = getResources().obtainTypedArray(R.array.icon_link);
+
+        for(int i = 0; i < titles.length; i++){
+            MenuItem item = new MenuItem(titles[i], icons.getResourceId(i, -1));
+            data.add(item);
         }
 
         return data;
@@ -99,7 +108,7 @@ public class NavigationDrawerFragment extends Fragment {
                 // if the user has never used the drawer, show it the first time
                 if(!mUserLearnedDrawer){
                     mUserLearnedDrawer = true;
-                    saveToPreferences(getActivity(), KEY_USER_LEARNED_DRAWER, String.valueOf(mUserLearnedDrawer));
+                    Tools.saveToPreferences(getActivity(), KEY_USER_LEARNED_DRAWER, String.valueOf(mUserLearnedDrawer));
                 }
                 getActivity().invalidateOptionsMenu();
             }
@@ -133,18 +142,6 @@ public class NavigationDrawerFragment extends Fragment {
             }
         });
 
-    }
-
-    public static void saveToPreferences(Context context, String preferenceName, String preferenceValue){
-        SharedPreferences sharedPreferences = context.getSharedPreferences(PREF_FILE_NAME, Context.MODE_PRIVATE);
-        SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.putString(preferenceName, preferenceValue);
-        editor.apply();
-    }
-
-    public static String readFromPreferences(Context context, String preferenceName, String defaultValue){
-        SharedPreferences sharedPreferences = context.getSharedPreferences(PREF_FILE_NAME, Context.MODE_PRIVATE);
-        return sharedPreferences.getString(preferenceName, defaultValue);
     }
 
 }

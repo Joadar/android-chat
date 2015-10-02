@@ -17,6 +17,18 @@
     <string name="password">Password</string>
     <string name="useAccountSaved"><u>Use account saved</u></string>
 
+    <string-array name="titles_link">
+        <item>Home</item>
+        <item>Friends</item>
+        <item>Parameters</item>
+    </string-array>
+
+    <string-array name="icon_link">
+        <item>@drawable/ic_account_circle_black_24dp</item>
+        <item>@drawable/ic_group_black_24dp</item>
+        <item>@drawable/ic_settings_black_24dp</item>
+    </string-array>
+
     <!-- Register activity -->
     <string name="descriptionChoiceSexeTitle">Who are you?</string>
     <string name="descriptionChoiceSexeContent">Are you a boy or a girl?</string>
@@ -51,5 +63,14 @@
     <!-- Profile's user -->
     <string name="send_request">Send a friend request</string>
     <string name="title_activity_friend">FriendActivity</string>
+    <string name="manage_friends"><u>Manage your friends</u></string>
+
+    <!-- Friends list -->
+    <string name="actionFriendValid">Valid</string>
+    <string name="actionFriendDecline">Decline</string>
+    <string name="title_activity_test">TestActivity</string>
+
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
 
 </resources>

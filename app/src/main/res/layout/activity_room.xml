@@ -91,5 +91,4 @@
             android:name="com.example.jonathan.chat.Fragment.NavigationDrawerFragment"
             tools:layout="@layout/fragment_navigation_drawer" />-->
 
-
 </android.support.v4.widget.DrawerLayout>
