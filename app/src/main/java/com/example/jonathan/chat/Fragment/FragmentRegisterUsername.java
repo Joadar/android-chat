@@ -1,10 +1,8 @@
 package com.example.jonathan.chat.Fragment;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,19 +11,16 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
 
-import com.example.jonathan.chat.ListActivity;
+import com.example.jonathan.chat.Manager.UserManager;
 import com.example.jonathan.chat.R;
 import com.example.jonathan.chat.Utils.SocketServer;
-import com.example.jonathan.chat.Utils.Tools;
-
-import org.json.JSONObject;
-
-import io.socket.emitter.Emitter;
 
 /**
  * Created by Jonathan on 21/09/15.
  */
 public class FragmentRegisterUsername extends Fragment implements View.OnClickListener {
+
+    private UserManager userManager;
 
     private EditText usernameText;
     private EditText passwordText;
@@ -40,6 +35,9 @@ public class FragmentRegisterUsername extends Fragment implements View.OnClickLi
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+
+        userManager = new UserManager(getActivity());
+
         // Inflate the layout for this fragment
         final View view = inflater.inflate(R.layout.fragment_register_username, container, false);
 
@@ -83,55 +81,7 @@ public class FragmentRegisterUsername extends Fragment implements View.OnClickLi
             // if the server is not disconnected, we can access to the rest
             if(!SocketServer.getInstance().isDisconnected()) {
 
-                // first we emit an user register
-
-                // Sending an object
-                JSONObject newUser = new JSONObject();
-                try {
-                    newUser.put("username", usernameText.getText().toString());
-                    newUser.put("password", passwordText.getText().toString());
-                    newUser.put("sexe", sexeUser);
-                } catch (Exception e) {
-
-                }
-
-                SocketServer.getInstance().getSocket().emit("user_register", newUser);
-
-                // get rooms one by one
-                SocketServer.getInstance().getSocket().on("user_register_fail", new Emitter.Listener() {
-
-                    @Override
-                    public void call(final Object... args) {
-                        Toast.makeText(getContext(), "Error, try again", Toast.LENGTH_LONG).show();
-                    }
-                });
-
-                SocketServer.getInstance().getSocket().on("user_register_success", new Emitter.Listener() {
-
-                    @Override
-                    public void call(final Object... args) {
-                        // second we emit the user login if there is no problem before
-
-                        Tools.saveToPreferences(getContext(), "username", usernameText.getText().toString());
-                        Tools.saveToPreferences(getContext(), "connected", "true");
-
-                        // Sending an object
-                        JSONObject obj = new JSONObject();
-                        try {
-                            obj.put("username", usernameText.getText().toString());
-                            obj.put("sexe", sexeUser);
-                        } catch (Exception e) {
-
-                        }
-
-                        // instance the socket with the username
-                        SocketServer.getInstance().getSocket().emit("new_user", obj);
-
-                        Intent intent = new Intent(getContext(), ListActivity.class);
-                        getActivity().finish();
-                        startActivity(intent);
-                    }
-                });
+                userManager.register(usernameText.getText().toString(), passwordText.getText().toString(), sexeUser);
 
             } else {
                 Toast.makeText(getContext(), "Server not connected", Toast.LENGTH_LONG).show();

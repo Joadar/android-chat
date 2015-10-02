@@ -21,6 +21,8 @@ import android.support.design.widget.Snackbar;
 import com.example.jonathan.chat.Adapter.MenuAdapter;
 import com.example.jonathan.chat.Adapter.RoomAdapter;
 import com.example.jonathan.chat.Fragment.NavigationDrawerFragment;
+import com.example.jonathan.chat.Manager.FriendManager;
+import com.example.jonathan.chat.Manager.RoomManager;
 import com.example.jonathan.chat.Model.Room;
 import com.example.jonathan.chat.Utils.SocketServer;
 import com.example.jonathan.chat.Utils.Tools;
@@ -37,6 +39,9 @@ import io.socket.emitter.Emitter;
 
 public class ListActivity extends AppCompatActivity {
 
+    private RoomManager roomManager;
+    private FriendManager friendManager;
+
     // friend
     private int idFriendRequest;
 
@@ -50,7 +55,6 @@ public class ListActivity extends AppCompatActivity {
 
     private RecyclerView recyclerViewRoom;
 
-    private SocketServer socketServer;
 
     // boolean test
     private boolean error;
@@ -59,6 +63,8 @@ public class ListActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_list);
+
+        friendManager = new FriendManager(this);
 
         error = false;
 
@@ -76,6 +82,8 @@ public class ListActivity extends AppCompatActivity {
         listRooms = new ArrayList<Room>();
 
         roomAdapter = new RoomAdapter(this, listRooms);
+        roomManager = new RoomManager(this, listRooms, roomAdapter);
+
 
         recyclerViewRoom = (RecyclerView) findViewById(R.id.list_rooms);
         recyclerViewRoom.setAdapter(roomAdapter);
@@ -125,12 +133,12 @@ public class ListActivity extends AppCompatActivity {
         });
 
         // if the server have an error
-        socketServer.getInstance().getSocket().on(Socket.EVENT_CONNECT_ERROR, new Emitter.Listener() {
+        SocketServer.getInstance().getSocket().on(Socket.EVENT_CONNECT_ERROR, new Emitter.Listener() {
 
             @Override
             public void call(Object... args) {
 
-                if(!error) {
+                if (!error) {
                     error = true;
                     closeActivity();
                 }
@@ -139,62 +147,10 @@ public class ListActivity extends AppCompatActivity {
         });
 
         // notice rooms are coming
-        socketServer.getInstance().getSocket().on("rooms_are_coming", new Emitter.Listener() {
-
-            @Override
-            public void call(final Object... args) {
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        // delete all rooms from list
-                        listRooms.clear();
-                        roomAdapter.notifyDataSetChanged();
-                    }
-                });
-            }
-        });
+        roomManager.callRooms();
 
         // get rooms one by one
-        socketServer.getInstance().getSocket().on("room", new Emitter.Listener() {
-
-            @Override
-            public void call(final Object... args) {
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-
-                        JSONObject data = (JSONObject) args[0];
-
-                        String name;
-                        int space;
-                        int nbUser;
-                        String image;
-                        boolean like;
-                        try {
-                            name = data.getString("name");
-                            space = data.getInt("space");
-                            nbUser = data.getInt("nb_user");
-                            image = data.getString("image");
-                            like = data.getBoolean("like");
-
-                        } catch (JSONException e) {
-                            return;
-                        }
-
-                        // Add room to list rooms
-                        Room room = new Room();
-                        room.setName(name);
-                        room.setSpace(space);
-                        room.setNbUser(nbUser);
-                        room.setImage(image);
-                        room.setLike(like);
-                        listRooms.add(room);
-                        roomAdapter.notifyDataSetChanged();
-                    }
-                });
-            }
-        });
-
+        roomManager.getRoom();
     }
 
     private void closeActivity(){
@@ -241,14 +197,14 @@ public class ListActivity extends AppCompatActivity {
         SocketServer.getInstance().getSocket().emit("have_friend_request");
 
         // if we haven't any socket, we go back to the login screen
-        if (socketServer.getInstance().getSocket() == null) {
+        if (SocketServer.getInstance().getSocket() == null) {
             Intent intent = new Intent(this, RegisterActivity.class);
             startActivity(intent);
             this.finish();
         }
 
         // need all rooms from the server
-        socketServer.getInstance().getSocket().emit("rooms");
+        SocketServer.getInstance().getSocket().emit("rooms");
 
 
          /*
@@ -258,77 +214,11 @@ public class ListActivity extends AppCompatActivity {
          */
 
         // when a room is modified, we edit this room
-        socketServer.getInstance().getSocket().on("edit_room", new Emitter.Listener() {
-
-            @Override
-            public void call(final Object... args) {
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        //listRooms.clear();
-
-                        JSONObject data = (JSONObject) args[0];
-                        String name;
-                        int space;
-                        int nbUser;
-                        int position;
-                        try {
-                            name = data.getString("name");
-                            space = data.getInt("space");
-                            nbUser = data.getInt("nb_user");
-                            position = data.getInt("position");
-                        } catch (JSONException e) {
-                            return;
-                        }
-
-                        if (listRooms.size() > 0) {
-                            // Edit room to list rooms
-                            listRooms.get(position).setName(name);
-                            listRooms.get(position).setSpace(space);
-                            listRooms.get(position).setNbUser(nbUser);
-                            roomAdapter.notifyDataSetChanged();
-                        }
-                    }
-                });
-            }
-        });
-
+        roomManager.editRoom();
+        
         // check our friends request
-        SocketServer.getInstance().getSocket().on("have_friend_request", new Emitter.Listener() {
-            @Override
-            public void call(final Object... args) {
+        friendManager.haveRequest();
 
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-
-                        Log.d("ListActivityLog", "have_friend_request args = " + args[0]);
-                        if(args[0] != null){
-                            snackbar();
-                        }
-                    }
-                });
-            }
-        });
-    }
-
-    private void snackbar(){
-        Log.d("ListActivityLog", "snackbar method called");
-
-        // event for the snackbar
-        final View.OnClickListener clickListener = new View.OnClickListener() {
-            public void onClick(View v) {
-                // when we click on the button, we are redirected to the friend activity
-                startActivity(new Intent(getApplicationContext(), FriendActivity.class));
-            }
-        };
-
-        final View coordinatorLayoutView = findViewById(R.id.snackbarPosition);
-
-        // make list view of friends request
-        Snackbar.make(coordinatorLayoutView, "You have new friend requests", Snackbar.LENGTH_INDEFINITE)
-                .setAction("See", clickListener)
-                .show();
     }
 
     @Override
@@ -366,7 +256,7 @@ public class ListActivity extends AppCompatActivity {
         SocketServer.getInstance().getSocket().emit("enter_room", room.getName());
 
         // if full room is on
-        socketServer.getInstance().getSocket().on("full_room", new Emitter.Listener() {
+        SocketServer.getInstance().getSocket().on("full_room", new Emitter.Listener() {
 
             @Override
             public void call(final Object... args) {

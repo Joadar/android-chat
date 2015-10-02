@@ -20,6 +20,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.jonathan.chat.Adapter.MessageAdapter;
+import com.example.jonathan.chat.Manager.MessageManager;
 import com.example.jonathan.chat.Model.Message;
 import com.example.jonathan.chat.Model.Room;
 import com.example.jonathan.chat.Model.User;
@@ -37,6 +38,8 @@ import io.socket.client.Socket;
 import io.socket.emitter.Emitter;
 
 public class RoomActivity extends AppCompatActivity implements TextWatcher, View.OnClickListener {
+
+    private MessageManager messageManager;
 
     private Toolbar toolbar;
 
@@ -82,10 +85,6 @@ public class RoomActivity extends AppCompatActivity implements TextWatcher, View
         getSupportActionBar().setDisplayShowHomeEnabled(true);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        // Fragment for the drawer layout
-        //final NavigationDrawerFragment drawerFragment = (NavigationDrawerFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_navigation_drawer);
-        //drawerFragment.setUp(R.id.fragment_navigation_drawer, (DrawerLayout) findViewById(R.id.drawer_layout), toolbar);
-
         listMessages = new ArrayList<Message>();
 
         messageAdapter = new MessageAdapter(this, listMessages);
@@ -93,6 +92,9 @@ public class RoomActivity extends AppCompatActivity implements TextWatcher, View
         recyclerViewMessage = (RecyclerView) findViewById(R.id.list_messages);
         recyclerViewMessage.setAdapter(messageAdapter);
         recyclerViewMessage.setLayoutManager(new LinearLayoutManager(this));
+
+        messageManager = new MessageManager(this, mRoom, listMessages, recyclerViewMessage, mAction);
+
 
         newMessage = (EditText) findViewById(R.id.new_message);
         sendButton = (ImageView) findViewById(R.id.send_message);
@@ -108,7 +110,6 @@ public class RoomActivity extends AppCompatActivity implements TextWatcher, View
                 }
                 return false;
             }
-
         });
 
         newMessage.addTextChangedListener(new TextWatcher() {
@@ -161,96 +162,13 @@ public class RoomActivity extends AppCompatActivity implements TextWatcher, View
         });
 
         // get all messages one by one
-        SocketServer.getInstance().getSocket().on("new_message", new Emitter.Listener() {
-
-            @Override
-            public void call(final Object... args) {
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-
-                        JSONObject data = (JSONObject) args[0];
-                        JSONObject user;
-                        String message;
-                        boolean information;
-                        String room;
-
-                        User author = new User();
-
-                        try {
-                            user = data.getJSONObject("user");
-                            author.setUsername(user.getString("username"));
-                            author.setId(user.getInt("id"));
-                            author.setSexe(Tools.getBooleanFromInt(user.getInt("sexe")));
-
-                            room = data.getString("room");
-                            message = data.getString("message");
-                            information = data.getBoolean("information");
-                        } catch (JSONException e) {
-                            return;
-                        }
-
-                        // if message's room sent is the room where I am
-                        if(room.equals(mRoom)) {
-                            Message msg = new Message();
-                            msg.setAuthor(author);
-                            msg.setMessage(message.trim());
-                            msg.setInformation(information);
-
-                            addMessage(msg);
-                        }
-                    }
-                });
-            }
-        });
+        messageManager.getNewMessage();
 
         // X is writing
-        SocketServer.getInstance().getSocket().on("writing", new Emitter.Listener() {
-
-            @Override
-            public void call(final Object... args) {
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-
-                        //Log.d("RoomActivityLog", "writing called = " + args[0]);
-
-                        JSONObject data = (JSONObject) args[0];
-                        JSONObject user;
-                        String username;
-                        String room;
-                        try {
-                            user = data.getJSONObject("user");
-                            username = user.getString("username");
-                            room = user.getString("room");
-                        } catch (JSONException e) {
-                            return;
-                        }
-
-                        // if I'm in the room where an user is writing
-                        if(room.equals(mRoom)) {
-                            // if is not me who is writing
-                            if (!username.equals(Tools.readFromPreferences(getApplicationContext(), "username", null)))
-                                mAction.setText(username + " is writing");
-                        }
-                    }
-                });
-            }
-        });
+        messageManager.isWriting();
 
         // X finish writing
-        SocketServer.getInstance().getSocket().on("end_writing", new Emitter.Listener() {
-
-            @Override
-            public void call(final Object... args) {
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        mAction.setText("");
-                    }
-                });
-            }
-        });
+        messageManager.endWriting();
 
         // if full room is on
         /*SocketServer.getInstance().getSocket().on("full_room", new Emitter.Listener() {
@@ -283,11 +201,6 @@ public class RoomActivity extends AppCompatActivity implements TextWatcher, View
 
     }
 
-    private void addMessage(Message msg){
-        listMessages.add(msg);
-        recyclerViewMessage.scrollToPosition(listMessages.size() - 1);
-        //messageAdapter.notifyItemInserted(listMessages.size() - 1);
-    }
 
     private void closeActivity(){
         Tools.saveToPreferences(getApplicationContext(), "connected", "false");
@@ -332,18 +245,7 @@ public class RoomActivity extends AppCompatActivity implements TextWatcher, View
         // need all messages from the current room
         SocketServer.getInstance().getSocket().emit("messages", mRoom);
 
-        // tell to everybody than we just enter in the room
-        JSONObject obj = new JSONObject();
-        try{
-            obj.put("message", "join the room");
-            obj.put("information", true);
-            obj.put("room", mRoom);
-        } catch(Exception e){
-
-        }
-
-        // emit our enter in the room
-        SocketServer.getInstance().getSocket().emit("new_message", obj);
+        messageManager.setNewMessage("join the room", true);
     }
 
     private void sendMessage(){
@@ -351,15 +253,7 @@ public class RoomActivity extends AppCompatActivity implements TextWatcher, View
         if(message.length() != 0) {
             newMessage.setText("");
 
-            JSONObject obj = new JSONObject();
-            try {
-                obj.put("message", message);
-                obj.put("room", mRoom);
-                obj.put("information", false);
-            } catch (Exception e) {
-
-            }
-            SocketServer.getInstance().getSocket().emit("new_message", obj);
+            messageManager.setNewMessage(message, false);
         }
     }
 
@@ -402,16 +296,8 @@ public class RoomActivity extends AppCompatActivity implements TextWatcher, View
     private void leftRoom(){
         SocketServer.getInstance().getSocket().emit("left_room", mRoom);
 
-        JSONObject obj = new JSONObject();
-        try{
-            obj.put("message", "left the room");
-            obj.put("information", true);
-            obj.put("room", mRoom);
-        } catch(Exception e){
 
-        }
-
-        SocketServer.getInstance().getSocket().emit("new_message", obj);
+        messageManager.setNewMessage("left the room", true);
     }
 
     @Override
@@ -429,52 +315,6 @@ public class RoomActivity extends AppCompatActivity implements TextWatcher, View
 
     }
 
-
-    public void getRoom(){
-
-        // Add room to list rooms
-        final Room room = new Room();
-        gRoom = new Room();
-
-        SocketServer.getInstance().getSocket().emit("room", mRoom);
-        SocketServer.getInstance().getSocket().on("room", new Emitter.Listener() {
-
-            @Override
-            public void call(final Object... args) {
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-
-                        JSONObject data = (JSONObject) args[0];
-
-                        String name;
-                        int space;
-                        int nbUser;
-                        String image;
-                        try {
-                            name = data.getString("name");
-                            space = data.getInt("space");
-                            nbUser = data.getInt("nb_user");
-                            image = data.getString("image");
-                        } catch (JSONException e) {
-                            return;
-                        }
-                        room.setName(name);
-                        room.setSpace(space);
-                        room.setNbUser(nbUser);
-                        room.setImage(image);
-
-                        gRoom = room;
-                    }
-                });
-            }
-        });
-    }
-
-    public final String getImageRoom(){
-        getRoom();
-        return gRoom.getImage();
-    }
 
     @Override
     public void onClick(View v) {
