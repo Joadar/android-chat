@@ -8,6 +8,7 @@ import android.app.FragmentTransaction;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,6 +16,7 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.example.jonathan.chat.Fragment.ProfileFragment;
+import com.example.jonathan.chat.Manager.FriendManager;
 import com.example.jonathan.chat.Model.User;
 import com.example.jonathan.chat.R;
 import com.example.jonathan.chat.Utils.SocketServer;
@@ -26,13 +28,17 @@ import java.util.ArrayList;
  */
 public class FriendAdapter extends RecyclerView.Adapter<FriendAdapter.FriendHolder> {
 
+    private FriendManager friendManager;
+
     private Context context;
     private LayoutInflater inflater;
 
     private ArrayList<User> friends;
     private boolean isRequest;
 
-    public FriendAdapter(Context context, ArrayList<User> friends, boolean isRequest){
+    public FriendAdapter(Context context, Activity activity, ArrayList<User> friends, boolean isRequest){
+        friendManager = new FriendManager(activity);
+
         inflater = LayoutInflater.from(context);
         this.context = context;
         this.friends = friends;
@@ -53,6 +59,12 @@ public class FriendAdapter extends RecyclerView.Adapter<FriendAdapter.FriendHold
         User current = friends.get(position);
         holder.username.setText(current.getUsername());
 
+        // ask the server if this user is connected
+        SocketServer.getInstance().getSocket().emit("is_connected", current.getId());
+        Log.d("friendAdapterLog", "is connected called");
+        // if user is connected, change the status text
+        friendManager.isConnected(holder.status);
+
         if(!isRequest){
             holder.buttonValid.setVisibility(View.GONE);
             holder.buttonDecline.setVisibility(View.GONE);
@@ -67,6 +79,7 @@ public class FriendAdapter extends RecyclerView.Adapter<FriendAdapter.FriendHold
     public class FriendHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
         public TextView username;
+        public TextView status;
         public Button buttonValid;
         public Button buttonDecline;
 
@@ -74,6 +87,7 @@ public class FriendAdapter extends RecyclerView.Adapter<FriendAdapter.FriendHold
             super(itemView);
 
             username = (TextView) itemView.findViewById(R.id.username);
+            status = (TextView) itemView.findViewById(R.id.status);
             buttonValid = (Button) itemView.findViewById(R.id.actionButtonValid);
             buttonDecline = (Button) itemView.findViewById(R.id.actionButtonDecline);
 

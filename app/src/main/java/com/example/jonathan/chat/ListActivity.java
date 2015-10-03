@@ -1,7 +1,13 @@
 package com.example.jonathan.chat;
 
+import android.app.Activity;
+import android.app.DialogFragment;
+import android.app.Fragment;
+import android.app.FragmentManager;
+import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.graphics.Color;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
@@ -21,6 +27,8 @@ import android.support.design.widget.Snackbar;
 import com.example.jonathan.chat.Adapter.MenuAdapter;
 import com.example.jonathan.chat.Adapter.RoomAdapter;
 import com.example.jonathan.chat.Fragment.NavigationDrawerFragment;
+import com.example.jonathan.chat.Fragment.ProfileFragment;
+import com.example.jonathan.chat.Fragment.SuggestRoomFragment;
 import com.example.jonathan.chat.Manager.FriendManager;
 import com.example.jonathan.chat.Manager.RoomManager;
 import com.example.jonathan.chat.Model.Room;
@@ -55,6 +63,8 @@ public class ListActivity extends AppCompatActivity {
 
     private RecyclerView recyclerViewRoom;
 
+    // suggest room
+    private FloatingActionButton fab;
 
     // boolean test
     private boolean error;
@@ -78,12 +88,30 @@ public class ListActivity extends AppCompatActivity {
         final NavigationDrawerFragment drawerFragment = (NavigationDrawerFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_navigation_drawer);
         drawerFragment.setUp(R.id.fragment_navigation_drawer, (DrawerLayout) findViewById(R.id.drawer_layout), toolbar);
 
+        // floating action button
+        fab = (FloatingActionButton) findViewById(R.id.fab);
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override public void onClick(View v) {
+                FragmentManager fm = getFragmentManager();
+                FragmentTransaction ft = fm.beginTransaction();
+
+                Fragment prev = fm.findFragmentByTag("dialog");
+                if (prev != null) {
+                    ft.remove(prev);
+                }
+
+                ft.addToBackStack(null);
+
+                // Create and show the dialog.
+                DialogFragment newFragment = new SuggestRoomFragment();
+                newFragment.show(ft, "dialog");
+            }
+        });
 
         listRooms = new ArrayList<Room>();
 
         roomAdapter = new RoomAdapter(this, listRooms);
         roomManager = new RoomManager(this, listRooms, roomAdapter);
-
 
         recyclerViewRoom = (RecyclerView) findViewById(R.id.list_rooms);
         recyclerViewRoom.setAdapter(roomAdapter);
@@ -151,6 +179,10 @@ public class ListActivity extends AppCompatActivity {
 
         // get rooms one by one
         roomManager.getRoom();
+
+        // notice the user about the status of his suggestion
+        roomManager.suggestRoom();
+
     }
 
     private void closeActivity(){
@@ -239,6 +271,8 @@ public class ListActivity extends AppCompatActivity {
         if (id == R.id.action_logout) {
 
             Tools.saveToPreferences(this, "connected", "false");
+
+            SocketServer.getInstance().getSocket().disconnect();
 
             Intent intent = new Intent(this, HomeActivity.class);
             startActivity(intent);

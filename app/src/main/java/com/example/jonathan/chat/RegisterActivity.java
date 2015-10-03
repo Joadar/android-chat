@@ -8,7 +8,7 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 
-import com.example.jonathan.chat.Fragment.FragmentRegisterSexe;
+import com.example.jonathan.chat.Fragment.RegisterGenderFragment;
 
 public class RegisterActivity extends AppCompatActivity {
 
@@ -17,7 +17,7 @@ public class RegisterActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register);
 
-        FragmentRegisterSexe fragment = new FragmentRegisterSexe();
+        RegisterGenderFragment fragment = new RegisterGenderFragment();
         FragmentManager fm = getSupportFragmentManager();
         FragmentTransaction transaction = fm.beginTransaction();
         transaction.replace(R.id.contentFragment, fragment);

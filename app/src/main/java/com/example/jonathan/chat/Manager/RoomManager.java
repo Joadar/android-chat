@@ -1,6 +1,7 @@
 package com.example.jonathan.chat.Manager;
 
 import android.app.Activity;
+import android.widget.Toast;
 
 import com.example.jonathan.chat.Adapter.RoomAdapter;
 import com.example.jonathan.chat.ListActivity;
@@ -122,6 +123,28 @@ public class RoomManager {
                             listRooms.get(position).setNbUser(nbUser);
                             roomAdapter.notifyDataSetChanged();
                         }
+                    }
+                });
+            }
+        });
+    }
+
+    public void suggestRoom(){
+        SocketServer.getInstance().getSocket().on("suggest_room", new Emitter.Listener() {
+
+            @Override
+            public void call(final Object... args) {
+                context.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+
+                        // if success
+                        if((boolean) args[0]){
+                            Toast.makeText(context.getApplicationContext(), "Suggest succeed", Toast.LENGTH_LONG).show();
+                        } else {
+                            Toast.makeText(context.getApplicationContext(), "Suggest failed", Toast.LENGTH_LONG).show();
+                        }
+
                     }
                 });
             }

@@ -18,7 +18,7 @@ import com.example.jonathan.chat.R;
 /**
  * Created by Jonathan on 21/09/15.
  */
-public class FragmentRegisterSexe extends Fragment implements View.OnClickListener {
+public class RegisterGenderFragment extends Fragment implements View.OnClickListener {
 
     private Button boyButton;
     private Button girlButton;
@@ -68,7 +68,7 @@ public class FragmentRegisterSexe extends Fragment implements View.OnClickListen
         FragmentTransaction ft = getFragmentManager().beginTransaction();
         ft.setCustomAnimations(R.anim.anim_slide_in_left, R.anim.anim_slide_out_left);
 
-        FragmentRegisterUsername nextFrag = new FragmentRegisterUsername();
+        RegisterUsernameFragment nextFrag = new RegisterUsernameFragment();
 
         Bundle data = new Bundle();
         data.putString("sexe", sexe);

@@ -18,7 +18,7 @@ import com.example.jonathan.chat.Utils.SocketServer;
 /**
  * Created by Jonathan on 21/09/15.
  */
-public class FragmentRegisterUsername extends Fragment implements View.OnClickListener {
+public class RegisterUsernameFragment extends Fragment implements View.OnClickListener {
 
     private UserManager userManager;
 
@@ -93,7 +93,7 @@ public class FragmentRegisterUsername extends Fragment implements View.OnClickLi
         FragmentTransaction ft = getFragmentManager().beginTransaction();
         ft.setCustomAnimations(R.anim.anim_slide_in_right, R.anim.anim_slide_out_right);
 
-        FragmentRegisterSexe nextFrag = new FragmentRegisterSexe();
+        RegisterGenderFragment nextFrag = new RegisterGenderFragment();
         ft.replace(R.id.contentFragment, nextFrag, null);
 
         // Start the animated transition.

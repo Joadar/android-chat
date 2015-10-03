@@ -12,6 +12,7 @@ import android.view.MenuItem;
 
 import com.example.jonathan.chat.Adapter.ViewPagerAdapter;
 import com.example.jonathan.chat.Fragment.FriendFragment;
+import com.example.jonathan.chat.Manager.FriendManager;
 import com.example.jonathan.chat.Model.User;
 import com.example.jonathan.chat.Utils.SocketServer;
 
@@ -23,6 +24,8 @@ import java.util.ArrayList;
 import io.socket.emitter.Emitter;
 
 public class FriendActivity extends AppCompatActivity {
+
+    private FriendManager friendManager;
 
     /** TODO
      * Two recyclers view accessible with tabs:
@@ -41,6 +44,8 @@ public class FriendActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_friend);
+
+        friendManager = new FriendManager(this);
 
         // toolbar
         toolbar = (Toolbar) findViewById(R.id.app_bar);
@@ -104,30 +109,7 @@ public class FriendActivity extends AppCompatActivity {
         Log.d("friendFragment", "getFriend called");
 
         // get list friend request
-        SocketServer.getInstance().getSocket().on("get_friend", new Emitter.Listener() {
-
-            @Override
-            public void call(final Object... args) {
-                String username;
-                int idUsername;
-
-                Log.d("friendFragment", "get_friends args = " + args[0]);
-
-                JSONObject data = (JSONObject) args[0];
-                try {
-                    username = data.getString("username");
-                    idUsername = data.getInt("id");
-                } catch (JSONException e) {
-                    return;
-                }
-
-                User user = new User();
-                user.setId(idUsername);
-                user.setUsername(username);
-
-                listFriends.add(user);
-            }
-        });
+        friendManager.getFriend(listFriends);
     }
 
     private void getFriendRequest(){
@@ -138,30 +120,7 @@ public class FriendActivity extends AppCompatActivity {
         Log.d("friendFragment", "getFriendRequest called");
 
         // get list friend request
-        SocketServer.getInstance().getSocket().on("get_friend_request", new Emitter.Listener() {
-
-            @Override
-            public void call(final Object... args) {
-                String username;
-                int idUsername;
-
-                Log.d("friendFragment", "get_friend_request args = " + args[0]);
-
-                JSONObject data = (JSONObject) args[0];
-                try {
-                    username = data.getString("username");
-                    idUsername = data.getInt("id");
-                } catch (JSONException e) {
-                    return;
-                }
-
-                User user = new User();
-                user.setId(idUsername);
-                user.setUsername(username);
-
-                listRequest.add(user);
-            }
-        });
+        friendManager.getFriendRequest(listRequest);
     }
 
     @Override

@@ -49,6 +49,12 @@
     <string name="room_list">Rooms list</string>
     <string name="action_logout">Logout</string>
 
+    <!-- Suggest room -->
+    <string name="room_suggest">Suggest a room</string>
+    <string name="room_name">Name</string>
+    <string name="room_argument">Why add this room?</string>
+    <string name="valid">Valid</string>
+
     <!-- Room activity -->
     <string name="author">Author</string>
     <string name="message">Lorem ipsum dolor sit amet, consectetur adipiscing elit</string>

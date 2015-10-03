@@ -33,6 +33,7 @@ public class ProfileFragment extends DialogFragment implements View.OnClickListe
     private ImageView gUserAvatar;
     private TextView gUsername;
     private TextView gUserMessages;
+    private TextView gStatus;
     private Button friendButton;
     private int userId;
 
@@ -69,6 +70,7 @@ public class ProfileFragment extends DialogFragment implements View.OnClickListe
         gUserAvatar = (ImageView) v.findViewById(R.id.userAvatar);
         gUsername = (TextView) v.findViewById(R.id.username);
         gUserMessages = (TextView) v.findViewById(R.id.userMessages);
+        gStatus = (TextView) v.findViewById(R.id.status);
         friendButton = (Button) v.findViewById(R.id.sendRequest);
         mLinkManageFriend = (TextView) v.findViewById(R.id.linkManageFriends);
 
@@ -80,6 +82,8 @@ public class ProfileFragment extends DialogFragment implements View.OnClickListe
         getUser(); // get informations about this current user
 
         isFriend(); // check if the current user and "me" are friends
+
+        isConnected(); // check if the user is connected
 
         return v;
     }
@@ -237,8 +241,27 @@ public class ProfileFragment extends DialogFragment implements View.OnClickListe
         });
     }
 
-    // if we have already sent a request, don't let the user send other friend request
-    private void requestSent(){
+   private void isConnected(){
 
-    }
+       SocketServer.getInstance().getSocket().emit("is_connected", userId);
+
+       SocketServer.getInstance().getSocket().on("is_connected", new Emitter.Listener() {
+
+           @Override
+           public void call(final Object... args) {
+               if (getActivity() != null) {
+                   getActivity().runOnUiThread(new Runnable() {
+                       @Override
+                       public void run() {
+                           Log.d("profileFragmentLog", "is connected args = " + args[0]);
+                            if((boolean) args[0])
+                                gStatus.setText("Status: online");
+                           else
+                                gStatus.setText("Status: offline");
+                       }
+                   });
+               }
+           }
+       });
+   }
 }

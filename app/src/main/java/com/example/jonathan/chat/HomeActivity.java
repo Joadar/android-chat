@@ -31,7 +31,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         SocketServer.getInstance();
 
         // if the server is not disconnected, we can access to the rest
-        if (!SocketServer.getInstance().isDisconnected()) {
+        //if (!SocketServer.getInstance().isDisconnected()) {
 
             // if the user is still connected without logout manually, then he pass directly on the list activity
             if (Tools.readFromPreferences(this, "connected", null) != null && Tools.readFromPreferences(this, "connected", null).equals("true")) {
@@ -39,9 +39,9 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
                 userManager.connect(Tools.readFromPreferences(this, "username", null), Tools.readFromPreferences(this, "password", null), Tools.readFromPreferences(this, "sexe", null));
 
             }
-        } else {
+        /*} else {
             Toast.makeText(this, "Server not connected", Toast.LENGTH_LONG).show();
-        }
+        }*/
 
 
 

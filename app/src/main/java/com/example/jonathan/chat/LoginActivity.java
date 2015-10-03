@@ -1,21 +1,18 @@
 package com.example.jonathan.chat;
 
-import android.content.Context;
 import android.content.Intent;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.ImageView;
 
-import com.example.jonathan.chat.Fragment.FragmentLoginAccountExisting;
-import com.example.jonathan.chat.Fragment.FragmentLoginNewAccount;
+import com.example.jonathan.chat.Fragment.LoginAccountExistingFragment;
+import com.example.jonathan.chat.Fragment.LoginNewAccountFragment;
 import com.example.jonathan.chat.Utils.Tools;
 
 public class LoginActivity extends AppCompatActivity implements View.OnClickListener
@@ -35,9 +32,9 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
         // if we have an account saved, we display this account
         if(!Tools.readFromPreferences(this, "username", "0").equals("0") && !Tools.readFromPreferences(this, "password", "0").equals("0") && !Tools.readFromPreferences(this, "sexe", "0").equals("null")) {
-            nextFragment = new FragmentLoginAccountExisting();
+            nextFragment = new LoginAccountExistingFragment();
         } else { // display form to login with an other account
-            nextFragment = new FragmentLoginNewAccount();
+            nextFragment = new LoginNewAccountFragment();
         }
 
         FragmentManager fm = getSupportFragmentManager();

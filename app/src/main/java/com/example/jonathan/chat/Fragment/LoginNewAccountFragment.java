@@ -1,6 +1,5 @@
 package com.example.jonathan.chat.Fragment;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -13,20 +12,15 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.jonathan.chat.ListActivity;
 import com.example.jonathan.chat.Manager.UserManager;
 import com.example.jonathan.chat.R;
 import com.example.jonathan.chat.Utils.SocketServer;
 import com.example.jonathan.chat.Utils.Tools;
 
-import org.json.JSONObject;
-
-import io.socket.emitter.Emitter;
-
 /**
  * Created by Jonathan on 22/09/15.
  */
-public class FragmentLoginNewAccount extends Fragment implements View.OnClickListener {
+public class LoginNewAccountFragment extends Fragment implements View.OnClickListener {
 
     private EditText username;
     private EditText password;
@@ -76,7 +70,7 @@ public class FragmentLoginNewAccount extends Fragment implements View.OnClickLis
 
         } else if (v == useAccountSaved){ // display fragment login account existing
             FragmentTransaction ft = getFragmentManager().beginTransaction();
-            FragmentLoginAccountExisting nextFrag = new FragmentLoginAccountExisting();
+            LoginAccountExistingFragment nextFrag = new LoginAccountExistingFragment();
             ft.replace(R.id.accountFragment, nextFrag, null);
 
             // Start the animated transition.

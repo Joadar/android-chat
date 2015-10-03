@@ -46,7 +46,17 @@
                 android:text="Messages:"
                 android:layout_below="@id/username"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"/>
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp"/>
+
+            <TextView
+                android:id="@+id/status"
+                android:text="Status: offline"
+                android:layout_below="@id/userMessages"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="12sp"
+                android:textColor="@color/secondaryText"/>
 
         </RelativeLayout>
 
@@ -56,8 +66,7 @@
         android:id="@+id/bottomProfile"
         android:layout_below="@id/topProfile"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        >
+        android:layout_height="wrap_content">
 
         <RelativeLayout
             android:id="@+id/layoutFriend"

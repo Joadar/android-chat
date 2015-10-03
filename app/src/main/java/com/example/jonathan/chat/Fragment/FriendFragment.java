@@ -72,7 +72,7 @@ public class FriendFragment extends Fragment {
 
         Log.i("friendFragment", "friendFragment.size = " + listFriends.size());
 
-        adapter = new FriendAdapter(getContext(), listFriends, isRequest);
+        adapter = new FriendAdapter(getContext(), getActivity(), listFriends, isRequest);
 
         recyclerView.setAdapter(adapter);
 

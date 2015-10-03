@@ -11,18 +11,16 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.example.jonathan.chat.Manager.UserManager;
 import com.example.jonathan.chat.R;
-import com.example.jonathan.chat.Utils.SocketServer;
 import com.example.jonathan.chat.Utils.Tools;
 
 
 /**
  * Created by Jonathan on 22/09/15.
  */
-public class FragmentLoginAccountExisting extends Fragment implements View.OnClickListener{
+public class LoginAccountExistingFragment extends Fragment implements View.OnClickListener{
 
     private ImageView avatar;
     private TextView username;
@@ -67,17 +65,17 @@ public class FragmentLoginAccountExisting extends Fragment implements View.OnCli
         if(v == loginButton){
             // login
             // if the server is not disconnected, we can access to the rest
-            if(!SocketServer.getInstance().isDisconnected()) {
+            //if(!SocketServer.getInstance().isDisconnected()) {
 
                 userManager.connect(Tools.readFromPreferences(getContext(), "username", null), Tools.readFromPreferences(getContext(), "password", null), Tools.readFromPreferences(getContext(), "sexe", null));
 
-            } else {
+            /*} else {
                 Toast.makeText(getContext(), "Server not connected", Toast.LENGTH_LONG).show();
-            }
+            }*/
 
         } else if (v == changeAccount) { // display fragment login new account
             FragmentTransaction ft = getFragmentManager().beginTransaction();
-            FragmentLoginNewAccount nextFrag = new FragmentLoginNewAccount();
+            LoginNewAccountFragment nextFrag = new LoginNewAccountFragment();
             ft.replace(R.id.accountFragment, nextFrag, null);
 
             // Start the animated transition.
